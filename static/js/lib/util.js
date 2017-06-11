@@ -1,58 +1,7 @@
 (function () {
     var util = {};
-
-    /* polyfill */
-    if (typeof Array.prototype.indexOf !== 'function') {
-        Array.prototype.indexOf = function (val, index) {
-            index = typeof index === 'number' ? index : 0;
-
-            if (index < 0) {
-                index = this.length + index;
-            } else if (index >= this.length) {
-                index = this.length - 1;
-            }
-
-            for (var i = index; i < this.length; i++) {
-                if (this[i] === val) {
-                    return i;
-                }
-            }
-
-            return -1;
-        };
-    }
-
-    if (typeof Array.prototype.lastIndexOf !== 'function') {
-        Array.prototype.lastIndexOf = function (val, index) {
-            index = typeof index === 'number' ? index : this.length;
-
-            if (index < 0) {
-                index = this.length + index;
-            } else if (index >= this.length) {
-                index = this.length - 1;
-            }
-
-            for (var i = index; i >= 0; i--) {
-                if (this[i] == val) {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-    }
-
-    if (typeof Function.prototype.bind !== 'function') {
-        Function.prototype.bind = function (context) {
-            var args = [].slice.call(arguments, 1);
-            var that = this;
-
-            return function () {
-                var _args = [].slice.call(arguments);
-                that.apply(context, args.concat(_args));
-            }
-        }
-    }
+    var slice = Array.prototype.slice,
+        toString = Object.prototype.toString;
 
     /* type */
     function type(val) {
@@ -126,6 +75,51 @@
         isFunction: isFunction,
         isPlainObject: isPlainObject,
         isObject: isObject
+    });
+
+    util.extend({
+        indexOf: function (arr, val, index) {
+            index = typeof index === 'number' ? index : 0;
+
+            if (index < 0) {
+                index = arr.length + index;
+            } else if (index >= arr.length) {
+                index = arr.length - 1;
+            }
+
+            for (var i = index; i < arr.length; i++) {
+                if (arr[i] === val) {
+                    return i;
+                }
+            }
+
+            return -1;
+        },
+        lastIndexOf: function (arr, val, index) {
+            index = typeof index === 'number' ? index : arr.length;
+
+            if (index < 0) {
+                index = arr.length + index;
+            } else if (index >= arr.length) {
+                index = arr.length - 1;
+            }
+
+            for (var i = index; i >= 0; i--) {
+                if (arr[i] == val) {
+                    return i;
+                }
+            }
+
+            return -1;
+        },
+        bind: function (fn, context) {
+            var args = Array.prototype.slice.call(arguments, 2);
+
+            return function () {
+                var _args = Array.prototype.slice.call(arguments);
+                fn.apply(context, args.concat(_args));
+            }
+        }
     });
 
     /**
