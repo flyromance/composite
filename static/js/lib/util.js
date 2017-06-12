@@ -78,6 +78,7 @@
     });
 
     util.extend({
+        // Array.prototype.indexOf
         indexOf: function (arr, val, index) {
             index = typeof index === 'number' ? index : 0;
 
@@ -112,6 +113,46 @@
 
             return -1;
         },
+        forEach: function (arr, fn) {
+            for (var i = 0; i < arr.length; i++) {
+                if (false === fn.call(arr[i], arr[i], i)) {
+                    break;
+                }
+            }
+        },
+        map: function (arr, fn) {
+            var ret = [];
+            for (var i = 0; i < arr.length; i++) {
+                arr.push(fn.call(arr[i], arr[i], i));
+            }
+            return ret;
+        },
+        filter: function (arr, fn) {
+            var ret = [], result;
+            for (var i = 0; i < arr.length; i++) {
+                if (true === fn.call(arr[i], arr[i], i)) {
+                    arr.push(arr[i]);
+                }
+
+            }
+            return ret;
+        },
+        reduce: function (arr, fn, initVal) {
+            var index = 0;
+
+            if (typeof initVal === 'undefined') {
+                initVal = arr[0];
+                index = 1;
+            }
+
+            for (var i = index; i < arr.length; i++) {
+                initVal = fn.call(initVal, initVal, arr[i]);
+            }
+
+            return initVal;
+        },
+
+        // Function.prototype.bind
         bind: function (fn, context) {
             var args = Array.prototype.slice.call(arguments, 2);
 
@@ -119,6 +160,22 @@
                 var _args = Array.prototype.slice.call(arguments);
                 fn.apply(context, args.concat(_args));
             }
+        },
+
+        // Object.keys
+        keys: function (obj) {
+            var ret = [];
+            for (var key in obj) {
+                ret.push(key);
+            }
+            return ret;
+        },
+
+        // Object.assign({}, {})
+        assign: function (target) {
+            var sources = [].slice(arguments, 1);
+            target = target || {};
+            return extend.apply(null, [true, target].concat(sources));
         }
     });
 
