@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+    function LazyMan(name) {
+        this.queue = [];
+        this.isFired = false;
+        this.start();
+        this.init(name);
+    }
+
+    LazyMan.prototype = {
+        start: function() {
+            var that = this;
+            setTimeout(function() {
+                that.isFired = true;
+                that.dequeue();
+            }, 0);
+        },
+        init: function(name) {
+            this.inQueue(function(next) {
+                console.log(name);
+                next();
+            });
+        },
+        inQueue: function(task) {
+            var that = this;
+            that.queue.push(task);
+
+            // 如果已经执行过了
+            that.isFired && that.dequeue();
+        },
+        dequeue: function() {
+            var that = this;
+            var task = this.queue.shift();
+            if (task) {
+                task.call(that, that.dequeue.bind(that));
+            }
+        },
+        sleep: function(second, callback) {
+            var that = this;
+            this.inQueue(function(next) {
+                console.log('sleeping...');
+                setTimeout(function() {
+                    console.log('sleep: ' + second + 's');
+                    callback && callback.call(that, that);
+                    next();
+                }, second * 1000);
+            });
+            return that;
+        },
+        eat: function(food) {
+            var that = this;
+            this.inQueue(function(next) {
+                console.log('eat: ' + food);
+                next();
+            });
+            return that;
+        },
+        stop: function() {
+            var that = this;
+            that.queue = [];
+        }
+    }
+
+    function lazyman(name) {
+        return new LazyMan(name);
+    }
+
+    var lazyman1 = lazyman('fanlong').sleep(1, function (context) {
+        context.stop();
+    }).eat('meet').sleep(2).eat('fruit');
+    </script>
+</body>
+
+</html>

@@ -17,6 +17,13 @@
         return getType(val) === 'object';
     }
 
+    function isEmptyObject(obj) {
+        for (var key in obj) {
+            return false;
+        }
+        return true;
+    }
+
     function isObject(val) {
         return !!val && typeof val == 'object';
     }
@@ -294,7 +301,8 @@
             str = str || loaction.search;
             divide = divide || '&';
             eq = eq || '='
-            var arr = str.split(divide), item, key, val,
+            var arr = str.split(divide),
+                item, key, val,
                 ret = {};
             for (var i = 0, lens = arr.length; i < lens; i++) {
                 item = arr[i].split(eq);
@@ -335,18 +343,249 @@
         querystring: querystring
     });
 
+
+    /**
+     * ##str.format(formatString, ...)##
+     * @param {String} formatString
+     * @return {String}
+     *
+     * ```javascript
+     * //Simple
+     * str.format('{0}',2014) //Error
+     * str.format('{0}',[2014])
+     * => 2014
+     *
+     * str.format('{2}/{1}/{0}',[2014,6,3])
+     * => "3/6/2014"
+     *
+     * str.format('{2}/{1}/{0}',2014,6,3)
+     * => "3/6/2014"
+     *
+     * str.format("{year}-{month}-{date}",{year:2014,month:6,date:3})
+     * => "2014-6-3"
+     *
+     * //Advanced
+     * str.format('{2,2,0}/{1,2,0}/{0}',[2014,6,3]);
+     * => "03/06/2014"
+     *
+     * str.format('{2,2,!}/{1,2,*}/{0}',[2014,6,3]);
+     * => "!3/*6/2014"
+     *
+     * str.format("{year}-{month,2,0}-{date,2,0}",{year:2014,month:6,date:3})
+     * => "2014-06-03"
+     *
+     * str.format('{0,-5}',222014)
+     * => "22014"
+     *
+     * format('{0,6,-}{1,3,-}','bar','')
+     * => "---bar---"
+     * ```
+     */
+    var format = (function () {
+        function postprocess(ret, a) {
+            var align = parseInt(a.align),
+                absAlign = Math.abs(a.align),
+                result, retStr;
+
+            if (ret == null) {
+                retStr = '';
+            } else if (typeof ret == 'number') {
+                retStr = '' + ret;
+            } else {
+                throw new Error('Invalid argument type!');
+            }
+
+            if (absAlign === 0) {
+                return ret;
+            } else if (absAlign < retStr.length) {
+                result = align > 0 ? retStr.slice(0, absAlign) : retStr.slice(-absAlign);
+            } else {
+                result = Array(absAlign - retStr.length + 1).join(a.pad || format.DefaultPaddingChar);
+                result = align > 0 ? result + retStr : retStr + result;
+            }
+            return result;
+        }
+
+        function p(all) {
+            var ret = {},
+                p1, p2, sep = format.DefaultFieldSeperator;
+            p1 = all.indexOf(sep);
+            if (p1 < 0) {
+                ret.index = all;
+            } else {
+                ret.index = all.substr(0, p1);
+                p2 = all.indexOf(sep, p1 + 1);
+                if (p2 < 0) {
+                    ret.align = all.substring(p1 + 1, all.length);
+                } else {
+                    ret.align = all.substring(p1 + 1, p2);
+                    ret.pad = all.substring(p2 + 1, all.length);
+                }
+            }
+            return ret; //{index,pad,align}
+        }
+
+        return function (self, args) {
+            var len = arguments.length;
+            if (len > 2) {
+                args = Array.prototype.slice.call(arguments, 1);
+            } else if (len === 2 && !isPlainObject(args)) {
+                args = [args];
+            } else if (len === 1) {
+                return self;
+            }
+            return self.replace(format.InterpolationPattern, function (all, m) {
+                var a = p(m),
+                    ret = tryget(args, a.index);
+                if (ret == null) ret = a.index;
+                return a.align == null && a.pad == null ? ret : postprocess(ret, a) || ret;
+            });
+        };
+    })();
+
+    format.DefaultPaddingChar = ' ';
+    format.DefaultFieldSeperator = ',';
+    format.InterpolationPattern = /\{(.*?)\}/g;
+
+    function formatDate(ts, opts) {
+        opts = opts || {};
+        var tmp = String(ts),
+            t, eff = tmp.match(/000$/) ? 1 : 1000;
+
+        if (tmp.match(/^[\d]+$/)) {
+            t = new Date(parseInt(ts * eff, 10));
+        } else /* if (tmp.match(/\d+-\d+-\d+( \d+:\d+:\d+)?/))*/ {
+            t = new Date(Date.parse(tmp.replace(/-/g, '/')));
+        }
+        return format(opts.format || utils.formatDate.DateFormatShort, {
+            year: t.getFullYear(),
+            month: t.getMonth() + 1,
+            date: t.getDate(),
+            hour: t.getHours(),
+            min: t.getMinutes()
+        });
+    }
+
+    formatDate.DateFormatShort = "{month,2,0}-{date,2,0} {hour,2,0}:{min,2,0}";
+
+    function normalizeDateTime(s) {
+        if (!s) return null;
+        var d;
+        s = s.toString();
+        if (s.match(/^\d{10}$/)) {
+            d = new Date(parseInt(s, 10) * 1000);
+        } else if (s.match(/^\d{10,}$/)) {
+            d = new Date(parseInt(s, 10));
+        } else if (s.indexOf('-') > 0) {
+            d = new Date(Date.parse(s.replace(/-/g, '/')));
+        }
+        return d;
+    }
+
+    /**
+     * 将"2014-01-01 12:12:12"格式化成 "1月1日 12:12" 或 " 2014年1月1日 12:12"
+     */
+    function chsdate(s, year) {
+        var d = normalizeDateTime(s),
+            result;
+        if (!d) return null;
+
+        result = format('{month}月{date}日 {hour}:{minute,2,0}', {
+            month: d.getMonth() + 1,
+            date: d.getDate(),
+            hour: d.getHours(),
+            minute: d.getMinutes()
+        });
+        return year ? d.getFullYear() + '年' + result : result;
+    }
+
+    function elapse(s) {
+        var d = normalizeDateTime(s);
+        if (!d) return null;
+
+        var now = new Date(),
+            delta = Math.floor((now - d) / 1000);
+
+        if (delta <= 60) {
+            return '刚刚';
+        } else if (delta > 60 && delta < 3600) {
+            return Math.floor(delta / 60) + '分钟前';
+        } else if (delta >= 3600 && delta < 864e2) {
+            return Math.floor(delta / 3600) + '小时前'
+        } else if (delta >= 864e2 && delta < 864e2 * 3) { // 最多显示 2天前
+            return Math.floor(delta / 864e2) + '天前';
+        } else if (delta >= 864e2 * 3) {
+            var now = new Date(), formatStr = '{month,2,0}月{date,2,0}日';
+            if(now.getFullYear() !== d.getFullYear()) { // 如果不是今年
+                formatStr = '{year}年{month,2,0}月{date,2,0}日';
+            }
+            return format(formatStr, {
+                year: d.getFullYear(),
+                month: d.getMonth() + 1,
+                date: d.getDate()
+            });
+        }
+    }
+
+    /**
+     * 将数字转换为1k,1w的形式
+     */
+    function toKw(n) {
+        if (n < 1000) return n;
+        if (n < 10000 && n >= 1000) return (n / 1000).toFixed(0) + 'K';
+        return (n / 10000).toFixed(0) + 'W';
+    };
+
+    /**
+     * 将1k,1w转化为对应的数字
+     * @param  {[type]} s [description]
+     * @return {[type]}   [description]
+     */
+    function fromKw(s) {
+        var units = {
+                k: 1000,
+                w: 10000
+            },
+            v = s.toLowerCase().replace(/([\d.]+)(k|w)$/, function(all, n, u) {
+                return parseInt(n, 10) * (units[u] || 1);
+            });
+        return parseInt(v, 10);
+    };
+
     /* 字符 */
-    function getLength(str) {
+    function countStr(str, setlen) {
+        var str = $.trim(str);
+        var count = 0,
+            re = /[\u4e00-\u9fa5]/,
+            uFF61 = parseInt("FF61", 16),
+            uFF9F = parseInt("FF9F", 16),
+            uFFE8 = parseInt("FFE8", 16),
+            uFFEE = parseInt("FFEE", 16);
 
+        for (var i = 0, len = str.length; i < len; i++) {
+            if (re.test(str[i])) {
+                count += 1;
+            } else {
+                var c = parseInt(str.charCodeAt(i));
+                if (c < 256) {
+                    count += 0.5
+                } else {
+                    if ((uFF61 <= c) && (c <= uFF9F)) {
+                        count += 0.5;
+                    } else if ((uFFE8 <= c) && (c <= uFFEE)) {
+                        count += 0.5;
+                    } else {
+                        count += 1;
+                    }
+                }
+            }
+        }
+        return count;
     }
 
-    function cut(str, lens) {
-        return str.subStr(0, lens);
-    }
-
-    var htmlMap = {
-        '<': '&lt;',
-        '>': '&gt;',
+    function cutStr(str, lens) {
+        lens = typeof lens === 'number': lens: str.length;
+        return str.length > lens ? str.subStr(0, lens) + '...' : str;
     }
 
     /**
@@ -363,6 +602,30 @@
 
     function unescapeToStr(str) {
 
+    }
+
+    function unescape(s) {
+        return s
+            .replace(/&nbsp;/g, " ")
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, "\"")
+            .replace(/&#039;/g, "'")
+            .replace(/&#39;/g, "'");
+    }
+
+    function escape(s) {
+        if (!s) {
+            return s
+        }
+        return s
+            .replace(/&/g, '&amp')
+            .replace(/</g, '&lt')
+            .replace(/>/g, '&gt')
+            .replace(/\"/g, '&quot')
+            .replace(/'/g, '&#039')
+            .replace(/'/g, '&#39');
     }
 
 
