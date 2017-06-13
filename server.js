@@ -32,7 +32,10 @@ var server = http.createServer(function (req, res) {
 					default:
 						break;
 				}
-				res.setHeader('Content-Length', data.length);
+
+				// Content-Length是指字节长度，不是字符串长度，所以不能直接用data.length;
+				// 一个中文字、中文符号3个字节，数字、字母、英文符号、空格为1个字节
+				res.setHeader('Content-Length', Buffer.byteLength(data)); 
 				res.setHeader('Content-Type', type);
 				res.statusCode = 200;
 				res.write(data);
@@ -53,7 +56,7 @@ var server = http.createServer(function (req, res) {
 				res.statusCode = 404;
 				res.end('not found...');
 			} else {
-				res.setHeader('Content-Length', data.length);
+				res.setHeader('Content-Length', Buffer.byteLength(data));
 				res.setHeader('Content-Type', 'text/html');
 				// res.setHeader('Connection', 'close');
 				res.statusCode = 200;

@@ -584,7 +584,7 @@
     }
 
     function cutStr(str, lens) {
-        lens = typeof lens === 'number': lens: str.length;
+        lens = typeof lens === 'number' ? lens : str.length;
         return str.length > lens ? str.subStr(0, lens) + '...' : str;
     }
 
