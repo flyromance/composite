@@ -163,10 +163,3 @@ customDefer.race = function (arr) {
 
     return innerPromise;
 };
-
-var promise = customDefer();
-promise.done(function (data) {
-
-    return '';
-    return '';
-}).then(function () {}).done(function () {});
