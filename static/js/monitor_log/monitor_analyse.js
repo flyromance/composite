@@ -26,37 +26,45 @@
                 }
             },
             d = {
-                on: function (t, e, n) { t.addEventListener ? t && t.addEventListener(e, n, !1) : t && t.attachEvent("on" + e, n) },
+                on: function (elem, type, n) { 
+                    elem.addEventListener ? elem && elem.addEventListener(e, type, false) 
+                    : elem && elem.attachEvent("on" + type, n) 
+                },
                 parentNode: function (t, e, n) {
-                    for (n = n || 5, e = e.toUpperCase(); t && n-- > 0;) {
+                    n = n || 5;
+                    e = e.toUpperCase();
+                    for (; t && n-- > 0;) {
                         if (t.tagName === e) return t;
-                        t = t.parentNode
+                        t = t.parentNode;
                     }
                     return null
                 }
             },
             h = {
-                fix: function (t) {
-                    if (!("target" in t)) {
-                        var e = t.srcElement || t.target;
-                        e && 3 == e.nodeType && (e = e.parentNode), t.target = e
+                fix: function (event) {
+                    if (!("target" in event)) {
+                        var target = event.srcElement || event.target;
+                        target && target.nodeType === 3 && (target = target.parentNode);
+                        event.target = target;
                     }
                     return t
                 }
             },
             l = (function () {
-                function t(t) {
-                    return null != t && null != t.constructor ? Object.prototype.toString.call(t).slice(8, -1) : ""
+                function type(t) {
+                    return null != t && null != t.constructor ? Object.prototype.toString.call(t).slice(8, -1).toLowerCase() : ""
                 }
                 return {
                     isArray: function (e) {
-                        return "Array" == t(e)
+                        return "array" == type(e)
                     },
                     isObject: function (t) {
-                        return null !== t && "object" == typeof t
+                        return t != null && typeof t === 'object'
                     },
-                    mix: function (t, e, n) {
-                        for (var r in e) !n && (t[r] || r in t) || (t[r] = e[r]);
+                    mix: function (t, e, cover) {
+                        for (var key in e) {
+                            !cover && (t[key] || key in t) || (t[key] = e[key])
+                        }
                         return t
                     },
                     encodeURIJson: function (t) {
@@ -79,7 +87,12 @@
                     n = n || {};
                     var r = n.expires;
                     "number" == typeof r && (r = new Date, r.setTime(r.getTime() + n.expires));
-                    try { o.cookie = t + "=" + escape(e) + (r ? ";expires=" + r.toGMTString() : "") + (n.path ? ";path=" + n.path : "") + (n.domain ? "; domain=" + n.domain : "") } catch (i) {}
+                    try { 
+                        o.cookie = t + "=" + escape(e) + 
+                        (r ? "; expires=" + r.toGMTString() : "") + 
+                        (n.path ? "; path=" + n.path : "") + 
+                        (n.domain ? "; domain=" + n.domain : "") 
+                    } catch (i) {}
                 }
             },
             p = {
@@ -100,14 +113,29 @@
                     return t.indexOf("pass") > -1 || t.indexOf("pwd") > -1 ? "403" : t
                 },
                 getBrowser: function () {
-                    var t = { "360se-ua": "360se", TT: "tencenttraveler", Maxthon: "maxthon", GreenBrowser: "greenbrowser", Sogou: "se 1.x / se 2.x", TheWorld: "theworld" };
-                    for (var e in t)
+                    var t = { 
+                        "360se-ua": "360se", 
+                        TT: "tencenttraveler", 
+                        Maxthon: "maxthon", 
+                        GreenBrowser: "greenbrowser", 
+                        Sogou: "se 1.x / se 2.x", 
+                        TheWorld: "theworld" 
+                    };
+                    for (var e in t) {
                         if (g.indexOf(t[e]) > -1) return e;
+                    }
+                        
                     var n = !1;
-                    try {+external.twGetVersion(external.twGetSecurityID(r)).replace(/\./g, "") > 1013 && (n = !0) } catch (i) {}
+                    try {
+                        +external.twGetVersion(external.twGetSecurityID(r)).replace(/\./g, "") > 1013 && (n = !0) 
+                    } catch (i) {}
                     if (n) return "360se-noua";
                     var a = g.match(/(msie|chrome|safari|firefox|opera|trident)/);
-                    return a = a ? a[0] : "", "msie" == a ? a = g.match(/msie[^;]+/) + "" : "trident" == a && g.replace(/trident\/[0-9].*rv[ :]([0-9.]+)/gi, function (t, e) { a = "msie " + e }), a
+                    a = a ? a[0] : ""; 
+                    "msie" == a ? 
+                        a = g.match(/msie[^;]+/) + "" : 
+                        "trident" == a && g.replace(/trident\/[0-9].*rv[ :]([0-9.]+)/gi, function (t, e) { a = "msie " + e });
+                    return a
                 },
                 getLocation: function () {
                     var t = "";
@@ -269,7 +297,7 @@
                             var o = m.get(t[i]);
                             r.push(t[i] + "=" + encodeURIComponent(o));
                         }
-                        n.uc = encodeURIComponent(r.join("&")):
+                        n.uc = encodeURIComponent(r.join("&"));
                     }
 
                     return n
@@ -316,7 +344,12 @@
                     return {}
                 }
             },
-            w = { trackUrl: null, clickUrl: null, areaIds: null, hbLogTimer: 0 },
+            w = { 
+                trackUrl: null, 
+                clickUrl: null, 
+                areaIds: null, 
+                hbLogTimer: 0 
+            },
             b = function (t) {
                 return document.getElementById(t)
             };
@@ -487,30 +520,32 @@
                 return this
             },
             endHeartBeat: function (t, e) {
-                if ("undefined" != typeof w.hbStarttime && null !== w.hbStarttime) {
+                if (w.hbStarttime != null) {
                     var n = {};
-                    n.id = t, l.isObject(e) && (n = l.mix(n, e, !1)), clearTimeout(w.hbLogTimer);
-                    var r = (Date.parse(new Date) - w.hbStarttime) / 1e3;
-                    n.steptime = r;
+                    n.id = t;
+                    l.isObject(e) && (n = l.mix(n, e, !1));
+                    clearTimeout(w.hbLogTimer);
+                    n.steptime = (+new Date() - w.hbStarttime) / 1000;
                     this.log(n, "heartbeat");
                     this.setConf("hbStarttime", null)
                 }
                 return this
             },
             setActiveTime: function (t) {
-                return p._activeTime = t, this
+                p._activeTime = t;
+                return this
             }
         }
     }(window);
 
-    r = location.protocol.toLowerCase() === "https:" ? "https:" : "http:";
+    var protocal = location.protocol.toLowerCase() === "https:" ? "https:" : "http:";
 
     n.setConf({
-        trackUrl: r + "//s.360.cn/qdas/s.htm",
-        clickUrl: r + "//s.360.cn/qdas/c.htm",
-        clickHeatMapUrl: r + "//s.360.cn/qdas/t.htm",
-        wpoUrl: r + "//s.360.cn/qdas/p.htm",
-        heartbeatUrl: r + "//s.360.cn/qdas/h.htm"
+        trackUrl: protocal + "//s.360.cn/qdas/s.htm",
+        clickUrl: protocal + "//s.360.cn/qdas/c.htm",
+        clickHeatMapUrl: protocal + "//s.360.cn/qdas/t.htm",
+        wpoUrl: protocal + "//s.360.cn/qdas/p.htm",
+        heartbeatUrl: protocal + "//s.360.cn/qdas/h.htm"
     }).init();
 
     window.QIHOO_MONITOR = n;
