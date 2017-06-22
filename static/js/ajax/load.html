@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-2.0.3.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            // 传输数据，请求类型从get变为post；
+            $("#div1").load("data1.php",{'name':'fanlong'},function(a,b,c){
+                console.log(a);
+                console.log(b);
+                console.log(c);
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="div1"></div>
+</body>
+</html>

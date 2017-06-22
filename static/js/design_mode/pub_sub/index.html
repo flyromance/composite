@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+    function Subject() {
+        this.list = {};
+    }
+
+    Subject.prototype = {
+        pareseName: function(name) {
+            var firstDotPos = name.indexOf('.');
+            var ret = [];
+            if (firstDotPos < 0) {
+                ret.push(name);
+            } else {
+                ret.push(name.slice(0, firstDotPos));
+                ret.push(name.slice(firstDotPos));
+            }
+            return ret;
+        },
+        on: function(name, handler) {
+            if (typeof name !== 'string' || !name) return;
+            var nameArr = this.pareseName(name);
+            this.list[nameArr[0]] = this.list[nameArr[0]] || [];
+            this.list[nameArr[0]].push({
+                nameSpace: nameArr[1] || '.',
+                handler: handler
+            });
+        },
+        emit: function(name, param) {
+            var that = this;
+            var args = [].slice.call(arguments).slice(1);
+            if (!name) {
+                that.emitAll.apply(this, args);
+                return;
+            }
+            var nameArr = this.pareseName(name);
+            var handlerArr = this.list[nameArr[0]] || [];
+
+            for (var i = 0; i < handlerArr.length; i++) {
+                if (handlerArr[i].nameSpace.indexOf(nameArr[1] || '.') > -1) {
+                    handlerArr[i].handler.apply(null, args);
+                }
+            }
+        },
+        emitAll: function(param) {
+            var args = [].slice.call(arguments);
+            for (var key in this.list) {
+                var subList = this.list[key];
+                for (var i = 0; i < subList.length; i++) {
+                    subList[i].handler.apply(null, args);
+                }
+            }
+        },
+        off: function(name, handler) {
+            if (!name) {
+                this.list = {};
+                return;
+            }
+
+            var nameArr = this.pareseName(name);
+            var subList = this.list[nameArr[0]];
+            var index;
+
+            for (var i = 0; i < subList.length; i++) {
+
+                // 删除的索引就是i
+                if (subList[i].nameSpace.indexOf(nameArr[1] || '.') > -1) {
+                    // 没有handler or handler存在，并且相等的情况下
+                    if (!handler || (typeof handler === 'function' && handler === subList[i].handler)) {
+                        // 注意
+                        // 改变数组的长度！！！
+                        subList.splice(i, 1);
+                        i--;
+                    } 
+                }
+            }
+        }
+    }
+
+    var subject = new Subject();
+    subject.on('click', function (param, param2) {
+        console.log('click', arguments);
+    });
+    subject.on('click.aa', function (param) {
+        console.log('click.aa', arguments);
+    });
+    subject.on('click.aa.bb', function (param) {
+        console.log('click.aa.bb', arguments);
+    });
+    subject.on('click.aa.bb.cc', function (param) {
+        console.log('click.aa.bb.cc', arguments);
+    });
+    // subject.emit('click', 1, 2);
+    // subject.emitAll(1, 2);
+    subject.off('click.aa');
+    // subject.emit('click', 1, 2);
+    // subject.emitAll(4);
+    subject.emit('click.aa', 3);
+    </script>
+</body>
+
+</html>

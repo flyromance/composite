@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    // 只能实例化一次
+    var single = (function() {
+        var instancer;
+
+        function Instancer() {
+
+        }
+
+        Instancer.prototype = {
+            init: function () {
+
+            }
+        }
+
+        return {
+            getInstance: function() {
+                if (!instancer) {
+                    instancer = new Instancer();
+                }
+                return instancer;
+            }
+        }
+    })();
+    </script>
+</body>
+</html>

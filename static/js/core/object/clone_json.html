@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    var book = {
+        title: 'professional javascript',
+        authors: ['fanlong'],
+        edition: 3,
+        year: 2011
+    }
+    var JBook = JSON.stringify(book);
+    console.log(JBook); // sting
+    var bookcopy = JSON.parse(JBook);
+    console.log(bookcopy); // object
+    console.log(bookcopy == book); // false
+
+    var jsonText = '{"title":"professional javascript","authors":["fanlong"],"edition":3,"year":2011}';
+    console.log(JSON.parse(jsonText) == JBook); // false
+</script>
+</body>
+</html>

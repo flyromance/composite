@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    function Person(name, age){
+        this.name = name;
+        this.age = age;
+        this.sayName = function(){
+            console.log(this.name);
+        }
+    }
+    Person.prototype = {
+        name:'flyromance',
+        hello:'hello',
+    }
+    Person.constructor = Person;
+    var person1 = new Person('fanlog',28);
+//    person1.name = undefined;
+//    delete person1.name;
+//    console.log(person1.name);
+//    console.log(person1.constructor == Person); // true
+//    console.log(Person.constructor == Function); // true
+//    console.log(Function.constructor);// Function
+//    console.log(Person instanceof Object); //true
+//    console.log(Person instanceof Function); // true
+//    console.log(Function instanceof Object); // ture
+
+    for(var i in person1){
+        console.log(person1[i]);
+    }
+    console.log(Object.keys(person1));
+
+    var obj1 = {
+        name:'fanlong'
+    }
+    var obj2 = obj1;
+    obj1.name = 'fandisaier';
+//    obj1 = {name:'flyromance'};
+    console.log(obj2.name);
+
+    var arr = [123,123];
+    arr.name = 'fanlong';
+    Object.defineProperty(arr,'lenght',{
+        enumerable: true,
+        value: 2
+    });
+    for(var ii in arr){
+        console.log(arr[ii]);
+    }
+
+    for(var iii in Object){
+        console.log(Object[iii]);
+    }
+    console.log(person1.__proto__);
+    console.log(person1.__proto__.__proto__);
+    console.log(person1.propertyIsEnumerable('name'));
+
+    function create(obj){
+        function fn(){};
+        fn.prototype = obj;
+        return new fn();
+    }
+
+    var obj3 = create(obj1);
+    console.log(obj3.__proto__ == obj1);
+</script>
+</body>
+</html>

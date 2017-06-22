@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="div">dib</div>
+<script type="text/javascript">
+    // 递归
+    function factorial(num){
+        if(num <= 1){
+            return 1;
+        }else {
+//            return num * factorial(num-1);
+            // 使用arguments.callee 更保险；
+            return num * arguments.callee(num-1);
+        }
+    }
+    // 命名函数表达式
+    var aa = function bb(){
+        console.log('bb');
+    };
+
+    // 闭包
+    function createFunctions(){
+        var result = [];
+        for(var i = 0; i < 10; i++){
+            (function(num){
+                result[num] = function(){
+                    console.log(num);
+                }
+            })(i);
+            /*result[i] = (function(num){
+                return function(){
+                    console.log(num);
+                }
+            })(i);*/
+        }
+        return result;
+    }
+    console.log(createFunctions()[1]());
+
+    var name = 'this window';
+    var obj = {
+        name: 'object',
+        getName: function(){
+            var that = this;
+            console.log(that.name);
+        }
+    }
+    obj.getName();
+    (obj.get = obj.getName)();// this window
+    console.log(obj.get);
+
+    function assignHandler(){
+        var elem = document.getElementById('div');
+        elem.onclick = function(){
+            console.log(this.id);
+        };
+
+        elem = null;
+    }
+    assignHandler();
+
+    function outputNumbers(){
+        for (var i =0; i < 3; i++){
+            console.log(i);
+        }
+        var i;
+        console.log(i);
+    }
+    outputNumbers();
+
+    function myObject(){
+        var private = 10;
+        this.publicMethod = function(){
+            private++;
+            console.log(private);
+        }
+    }
+    var obj1 = new myObject();
+    var obj2 = new myObject();
+    obj1.publicMethod();
+    obj2.publicMethod();
+</script>
+</body>
+</html>

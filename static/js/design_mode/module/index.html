@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script type="text/javascript">
+    var foo = (function() {
+
+        var name = 'fanlong';
+
+        return {
+            changeInner: function (val) {
+                name = val;
+            }
+        }
+    })();
+
+
+    var outerMethod = (function () {
+        // 不想暴露到外面，内部使用
+        function innerMethod () {
+
+        }
+
+        return function () {
+            // 
+            innerMethod();
+        }
+    })();
+    </script>
+</body>
+</html>

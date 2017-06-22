@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="professional-javascript.js"></script>
+</head>
+<body>
+<!--
+    模拟跨域环境
+    0、C:\xampp\apache\conf\httpd.conf：修改默认的本地网站文件目录，如下：
+        DocumentRoot "C:/xampp/htdocs" 修改为 "D:/dev"
+
+    1、C:\Windows\System32\drivers\etc\hosts：把自定义的网址，映射到127.0.0.1上，如下：
+        127.0.0.1 www.ajax.com
+        127.0.0.1 a.ajax.com
+        127.0.0.1 b.ajax.com
+        127.0.0.1 www.dev.com
+
+    2、C:\xampp\apache\conf\extra\httpd-vhosts.conf：配置自定义网址对应的文件地址，如下：
+        <VirtualHost *:80>
+            DocumentRoot "D:/dev/ajax"
+            ServerName www.ajax.com
+        </VirtualHost>
+
+        <VirtualHost *:80>
+            DocumentRoot "D:/dev/ajax"
+            ServerName a.ajax.com
+        </VirtualHost>
+
+        <VirtualHost *:80>
+            DocumentRoot "D:/dev/ajax"
+            ServerName b.ajax.com
+        </VirtualHost>
+
+        <VirtualHost *:80>
+            DocumentRoot "D:/dev/"
+            ServerName www.dev.com
+        </VirtualHost>
+
+    3、这样就模拟了不同的域名，其实访问的是同一个网站文件
+-->
+
+<iframe id="cross-iframe" style="display:none" src="http://b.ajax.com/for-cross-iframe.html"></iframe>
+
+<script>
+    // 同域（域名一模一样），同级目录, success
+//    sendXhr('data.php');
+
+    // 同域，不同协议号，fali！！！
+//    sendXhr('http://www.ajax.com/data.php');
+
+    // 同域，同级目录，不同端口（当前端口为80，请求为8080）, fail！
+//        sendXhr('http://www.ajax.com:8080/data-port.php');
+
+    // 同域，不同级目录pathname, success
+//    sendXhr('text/data.php');
+
+    // www.ajax.com、 a.ajax.com、 b.ajax.com，虽然根域相同，子域名不同，这也属于跨域
+    // 任何一个域名向另一个域名发起请求都会失败, fail！！
+//    sendXhr('http://www.ajax.com/data.php');
+
+    // 总之，只要protocol、host(包括hostname和port)不一样，就是跨域！
+
+
+    // 不是同域的，不要忘了加  http:// ，不然请求地址就变为了  当前的域名 + www.dev.com/data.php
+//    sendXhr('http://www.dev.com/data.php')
+
+</script>
+
+<!-- iframe跨域解决方案 -->
+<script type="text/javascript">
+    // iframe——解决夸子域请求问题，a.ajax.com 请求 b.ajax.com下的文件
+
+    /*document.domain = 'ajax.com';
+
+    // 问什么提示doAjax不是一个函数，而且是undefined？？
+     console.log(window.frames['cross-iframe']);
+     window.frames['cross-iframe'].contentWindow.doAjax(function(data){
+     alert(data);
+     });*/
+
+    // frame.contentDocument || frame.contentWindow.document
+</script>
+
+ <!--jsonp 跨域解决方案！-->
+<script type="text/javascript">
+    // 这里的jsonp函数名，要与请求（如下面b.ajax.com/jsonp.js）返回数据中 执行函数名一致！！！
+    function jsonp(data){
+        alert(data.name);
+    }
+</script>
+<script src="http://b.ajax.com/jsonp.js"></script>
+
+</body>
+</html>

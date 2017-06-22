@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    var obj = {
+        x:10,
+        foo: function(){
+            function bar(){
+                console.log(x); // undefined
+                console.log(y); // 30
+                console.log(this.x); // 20
+            }
+
+            with(this){
+                var x = 20;
+                var y = 30;
+                console.log(this); // obj
+                bar.call(this);
+            }
+        }
+    };
+    obj.foo();
+
+    // 上面obj对象相当于下面的obj1对象，变量提升、with、this；
+    var obj1 = {
+        x: 10,
+        foo: function(){
+            var x, y;
+            function bar(){
+                console.log(x);
+                console.log(y);
+                console.log(this.x);
+            }
+            // this指向obj1；
+            with(this){
+                x = 20; // obj1中包含命为x的属性，所以this.x被修改为20
+                y = 30; // ojb1中没有命为y的属性，查找作用域链中下一个变量对象下属性，发现有y，所以y修改为30
+
+                console.log(this); // this指向obj1
+                bar.call(this);
+            }
+        }
+    }
+    var a = 0;
+    function aa(){
+        console.log(a);
+    }
+    function b(){
+        var a = 1;
+        aa();
+    }
+    b(); // 0
+    function c(){
+        var a = 1;
+        function d(){
+            console.log(a);
+        }
+        d();
+    }
+    c(); // 1
+</script>
+</body>
+</html>

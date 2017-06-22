@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+    // test：返回true or false
+    // g：记录位置
+    // 无g：不记录位置
+
+    var src = '#id .class #ddd';
+    var reg = /#\w+/;
+    var reg_g = /#\w+/g;
+
+    // 不记录位置
+    console.log(reg.test(src));
+    console.log(reg.test(src));
+    console.log(reg.test(src));
+    console.log(reg.test(src));
+
+    // 记录位置, 如果匹配不到，index = 0 重新开始匹配
+    console.log('g', reg_g.test(src)); // true
+    console.log('g', reg_g.test(src)); // true
+    // console.dir(reg_g.lastIndex = 0); 修改lastIndex
+    console.log('g', reg_g.test(src)); // false
+    console.log('g', reg_g.test(src)); // true
+
+    // 用test的时候，最好不要用加g的
+    </script>
+</body>
+
+</html>

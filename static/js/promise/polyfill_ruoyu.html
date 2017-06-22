@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    class Prom {
+        constructor () {
+            this.list = [];
+            this.oncatch = null;
+        }
+
+        then (onsuccess, onfail) {
+            this.list.push({
+                resolve: onsuccess,
+                reject: onfail
+            });
+
+            return this;
+        }
+
+        resolve (val) {
+            this.complete('resolve', val); 
+        }
+
+        reject (val) {
+            this.complete('reject', val);
+        }
+
+        complete (type, val) {
+            var item;
+            if (type == 'resolve') {
+                if (item = this.list.shift()) {
+                    if (item[type]) {
+                        item[type].call(null, val);
+                    }
+                }
+            } else {
+                this.list = null;
+                this.oncatch && this.oncatch(val);
+            }
+        }
+
+        catch (onfail) {
+            this.oncatch = onfail;
+            return this;
+        }
+    }
+
+    var prom = new Prom();
+
+    function getCity(val) {
+        setTimeout(function () {
+            // prom.resolve(val + 'beijing; ');
+
+            prom.reject('fail');
+        }, 1000);
+    }
+
+    function getWeather(city) {
+        setTimeout(function () {
+            prom.resolve(city + 'haotianqi; ');
+        }, 1000);
+    }
+
+    function getSuggestion(weather) {
+        console.log(weather + 'huijia;');
+    }
+
+    prom.then(getCity, function () {
+
+    }).then(getWeather, function () {
+
+    }).then(getSuggestion, function () {
+
+    }).catch(function (val) {
+        console.log(val);
+    }).resolve('api; ');
+
+    </script>
+</body>
+</html>

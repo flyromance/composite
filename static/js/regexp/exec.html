@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+    // exec方法，加g与不加g区别！
+    // g: 记录匹配索引位置，可以利用while循环，操作所有匹配
+    // 无g：只返回一次匹配(有，子匹配)，不记录位置，多次调用结果一致，不能while循环
+
+
+    var test1 = "<div>{{name}}</div><div>{{if age == 1}}23{{/if}}</div><span>{{data.title}}";
+    var test2 = "<div>{{name}}</div><div>{{if age == 1}}23{{/if}}</div><span>";
+    var reg = /{{([^{}]*)}}/;
+    var reg_g = /{{([^{}]*)}}/g; // 可以记录位置
+
+    // ret.index 表示：
+    // 下次匹配开始位置：匹配字符的末尾字符的下一个字符的索引位置 == reg.lastIndex 
+    // ret.input 被匹配的完整内容
+    var ret = ["{{name}}", "name"];
+
+    // 不能记录位置，每次调用都返回一样的结果 
+    console.log('', reg.exec(test1));
+    console.log('', reg.exec(test1));
+
+    // g全局：记录上次索引结束的位置，再次调用从上次结束位置开始索引
+    console.log('g', reg_g.exec(test1));
+    console.log('g', reg_g.exec(test1));
+    console.log('g', reg_g.exec(test2));
+
+
+    // 利用index搜索test1中所有的匹配
+    // 每调用一次匹配，正则表达式自动从上次匹配位置之后开始再次匹配，
+    // 目标: 把<div>  name  </div><div>  if age == 1 等 扣出来！
+    var reg_test = /{{([^{}]*)}}/g,
+        str = "<div>{{name}}</div><div>{{if age == 1}}23{{/if}}</div><span>{{data.title}}</span>",
+        match_test, index = 0;
+    var arr = [];
+
+    // 如果不加g，就是死循环
+    while (match_test = reg_test.exec(str)) {
+        // 获取{{之前的字符串
+        arr.push(str.slice(index, match_test.index));
+        arr.push(match_test[1]);
+
+        // }}之后一个字符的索引位置
+        index = match_test.index + match_test[0].length;
+    }
+    arr.push(str.slice(index));
+    console.log(arr);
+    </script>
+</body>
+
+</html>

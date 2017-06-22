@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    // 只需要超类原型上的方法；继承方法；
+    function inheritPrototype(subClass, superClass){
+        function F(){};
+        F.prototype = superClass.prototype;
+        subClass.prototype = new F();
+        subClass.prototype.constructor = subClass;
+    }
+    function SuperType(name){
+        this.name = name;
+        this.colors = ['red','blue'];
+    }
+    SuperType.prototype.sayName = function(){
+        console.log(this.name);
+    }
+
+    function SubType(name, age){
+        SuperType.call(this, name); // 构造函数继承
+        this.age = age;
+    }
+    // 耦合太多，互相影响，如果子类修改prototype，父类也会受影响，反之相同
+    // SubType.prototype = SuperType.prototype; 
+
+    // 解决了耦合问题，但是：使子类不光继承了父类的原型上的属性，而且继承了父类实例属性
+    // SubType.prototype = new SuperType(); 
+
+    // 原型继承
+    // 解决了耦合、继承父类实例属性的问题
+    inheritPrototype(SubType, SuperType);
+
+    // 不会影响父类
+    SubType.prototype.sayAge = function(){
+        console.log(this.age);
+    }
+    var superInstance = new SuperType('fly');
+    var subInstance = new SubType('fanlong', 28);
+    subInstance.sayName();
+    console.log(superInstance.colors == subInstance.colors); // false
+    console.log(subInstance.__proto__);
+</script>
+<script>
+
+    // 封装
+    function inherit(supper, property1, property2) {
+        function Fn() {}
+
+        var propertys = null;
+        var SuperClass = null;
+        var args = [].slice.apply(arguments);
+
+        if (typeof args[0] != 'function') { // 第一个不是函数，说明没有父类可以继承
+            SuperClass = function () {};
+            propertys = args;
+        } else { // 第一个参数为父类函数
+            SuperClass = args[0];
+            propertys = args.slice(1);
+        }   
+
+        // 子类
+        function SubClass() {
+            SuperClass.apply(this, arguments); // 继承实例属性
+        }
+
+        // 继承原型属性
+        Fn.prototype = SuperClass.prototype;
+        SubClass.prototype = new Fn();
+        SubClass.prototype.constructor = SubClass;
+
+        // 添加propertys到原型上
+        // 访问优先级比继承的原型属性高
+        for (var i = 0; i < propertys.length; i++) {
+            var property = propertys[i]; 
+            for (var key in property) {
+                SubClass.prototype[key] = property[key];
+            }
+        }
+
+        // 继承工具属性
+        for (var tool_key in SuperClass) {
+            SubClass[tool_key] = SuperClass[tool_key];
+        }
+
+        return SubClass;
+    }
+
+    function Foo(name, age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    Foo.prototype = {
+        sayName: function () {
+            console.log(this.name);
+        }
+    }
+
+    Foo.click = function () {
+        console.log('click');
+    };
+
+    var Foo1 = inherit(Foo, {
+        sayAge: function () {
+            console.log(this.age);
+        }
+    });
+
+    var Foo2 = inherit(Foo1, {
+        sayHello: function () {
+            console.log('hello world!');
+        }
+    });
+
+    var foo1 = new Foo1('fanlong', 22);
+    var foo2 = new Foo2('flyromance', 28);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+    function Middleware() {
+        this.lists = [];
+    }
+
+    Middleware.prototype = {
+        use: function(fn) {
+            if (typeof fn === 'function') {
+                this.lists.push(fn);
+            }
+            return this;
+        },
+        next: function() {
+            if (this._caches && this._caches.length) {
+                this._caches.shift().apply(null, [this.data, this.next.bind(this)]);
+            }
+        },
+        execute: function(data) {
+            this._caches = this.lists.map(function(item, index) {
+                return item;
+            });
+            this.data = data;
+            this.next();
+        }
+    }
+
+    var middleware1 = new Middleware();
+    middleware1.use(function(data, next) {
+        console.log(1, data.name);
+        next();
+    });
+    middleware1.use(function(data, next) {
+        console.log(2);
+        next();
+    });
+    middleware1.use(function(data, next) {
+        console.log(3);
+        next();
+    });
+    middleware1.execute({
+        name: 'fanlong'
+    });
+    </script>
+</body>
+
+</html>

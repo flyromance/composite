@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="http://lib.baomitu.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="sub_pub.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    // test
+    var left_modle = new SubPub();
+    left_modle.subscribe('foo', function() {
+        console.log('foo', arguments);
+    });
+    left_modle.subscribe('foo.a', function() {
+        console.log('foo.a', arguments);
+    });
+    left_modle.subscribe('foo.a.b', function() {
+        console.log('foo.a.b', arguments);
+    });
+    left_modle.unSubscribe('foo.a');
+    left_modle.publish('foo', 12, 123);
+    // left_modle.publish('foo.a', 12, 123);
+    // left_modle.publish('foo.a.b', 12, 123);
+
+    </script>
+</body>
+
+</html>

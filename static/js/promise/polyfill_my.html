@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+    // https://zhuanlan.zhihu.com/p/26501270?group_id=838787329333284864
+    // https://zhuanlan.zhihu.com/p/25562598
+    function Defer() {
+        this.list = {
+            resolve: [],
+            reject: [],
+            notify: []
+        };
+
+        this.val = {
+            resolve: undefined,
+            reject: undefined,
+            notify: undefined
+        }
+
+        this.state = 'pending'; // 'resolved'
+    }
+
+    // getData().then(getImg).then(renderImg).catch(function(err) {
+    //     console.log(err);
+    // });
+
+    Defer.prototype = {
+        constructor: Defer,
+        then: function(resolveHandler, rejectHandler, notifyHandler) {
+            var defer = new Defer();
+            var _resolveHandler, _rejectHandler, _notifyHandler;
+
+            if (this.state === 'resolved') {
+                resolveHandler.apply(null, this.val.resolve);
+            } else if (this.state === 'rejected') {
+                rejectHandler.apply(null, this.val.reject);
+            } else {
+                _resolveHandler = function() {
+                    var ret = resolveHandler.apply(null, arguments);
+
+                    if (ret instanceof Defer) {
+
+                        if (ret.state === 'resolved') {
+                            defer.resolve(ret.val.resolve);
+                        } else if (ret.state === 'rejected') {
+
+                        } else {
+                            ret.list = defer.list;
+                        }
+                    } else {
+                        defer.resolve(ret);
+                    }
+                };
+
+                _rejectHandler = function() {
+                    var ret = rejectHandler.apply(null, arguments);
+                    defer.reject(ret.val.reject);
+                }
+
+                this.list.resolve.push(_resolveHandler);
+                this.list.reject.push(_rejectHandler);
+                this.list.notify.push(_notifyHandler);
+            }
+
+            return defer;
+        },
+        catch: function(rejectHandler) {
+            if (this.state === 'rejected') {
+                rejectHandler.call(null, this.val.reject);
+            } else {
+                this.list.reject.push(rejectHandler);
+            }
+        },
+        resolve: function(val) {
+            var handler = null;
+            var ret;
+            this.state = 'resolved';
+            this.val.resolve = val;
+            while (handler = this.list.resolve.shift()) {
+                handler.apply(null, arguments);
+            }
+        },
+        reject: function(val) {
+            var handler = null;
+            var ret;
+            this.state = 'rejected';
+            this.val.reject = val;
+            while (handler = this.list.reject.shift()) {
+                handler.apply(null, arguments);
+            }
+        },
+        notify: function(val) {
+
+        }
+    }
+
+    Defer.rece = function() {
+        var defer = new Defer();
+
+        return defer;
+    };
+
+    Defer.when = function() {
+        var defer = new Defer();
+        var args = arguments[0] || [];
+        var num = args.length,
+            item,
+            retArgs = new Array(num);
+
+        for (var i = 0; i < args.length; i++) {
+            item = args[i];
+
+            if (item instanceof Defer) {
+                if (item.state === 'resolved') {
+                    num--;
+                    retArgs[i] = args[i];
+                } else if (item.state === 'rejected') {
+                    defer.state = 'rejected';
+                } else {
+                    item.then(function() {
+                        check();
+                    }, function() {
+                        defer.reject();
+                    });
+                }
+            } else {
+                retArgs[i] = item;
+                num--;
+            }
+        }
+
+        function check() {
+            if (num == 0) {
+                defer.resolve.call(defer, retArgs);
+            }
+        }
+
+        check();
+
+        return defer;
+    };
+
+    function getData() {
+        var defer = new Defer();
+
+        setTimeout(function() {
+            console.log(1);
+            defer.resolve('xxx.png1');
+        }, 1000);
+
+        return defer;
+    }
+
+    function getImg(src) {
+        var defer = new Defer();
+
+        // setTimeout(function() {
+        //     console.log(2);
+        //     defer.resolve(src);
+        // }, 1000);
+
+        // console.log(2);
+        // defer.resolve('common/' + src);
+
+        console.log(2);
+        defer.reject('common/' + src);
+
+        return defer;
+    }
+
+    function renderImg(img) {
+        console.log('complete:', img);
+    }
+
+    getData().then(getImg).then(renderImg).catch(function(err) {
+        console.log(err);
+    });
+
+    Defer.when([1, 2, 3]).then(function(a, b, c) {
+        console.log(a, b, c);
+    });
+    </script>
+</body>
+
+</html>
