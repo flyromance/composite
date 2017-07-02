@@ -4,16 +4,6 @@ var querystring = require('querystring');
 var path = require('path');
 var fs = require('fs');
 
-var myconnect = require('./app/myconnect');
-
-var app = myconnect();
-
-app.use(function (req, res, next) {
-	console.log('log', req.url);
-});
-
-app.static('./view');
-
 var server = http.createServer(function (req, res) {
 	var url = parse(req.url);
 
