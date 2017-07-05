@@ -125,7 +125,7 @@ Connect.prototype = {
                             var engine = that.engines[extname.slice(1)];
                             !engine && (engine = that.engines.ejs);
                             engine(filepath, function(data) {
-                                res.writeHeader(200, {
+                                res.writeHead(200, 'ok', {
                                     'Content-Type': 'text/html',
                                     'Content-Length': Buffer.byteLength(data)
                                 });
@@ -199,7 +199,7 @@ Connect.prototype = {
                             res.setHeader('Content-Length', Buffer.byteLength(data));
                             res.statusCode = 200;
                             res.end(data);
-                            // res.writeHeader(200, {
+                            // res.writeHead(200, 'ok', {
                             //     'Content-Type': contentType,
                             //     'Content-Length': Buffer.byteLength(data)
                             // });
@@ -249,9 +249,10 @@ Connect.prototype = {
         var server = that.server = http.Server();
 
         server.on('request', function(req, res) {
-
+            var i = 0;
             function next() {
-                var handler = that.list.shift();
+                var handler = that.list[i++];
+                if (!handler) return;
                 typeof handler === 'function' && handler.apply(that, [req, res, next]);
             }
 
@@ -265,7 +266,7 @@ Connect.prototype = {
 
         // 404页面
         that.use(function(req, res) {
-            res.writeHeader(404);
+            res.writeHead(404);
             res.end();
         });
 
