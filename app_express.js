@@ -1,6 +1,6 @@
-var express = require('./app/lib/express.js');
-var bodyParser = require('./app/lib/bodyParser.js');
-var plainEngine = require('./app/plainEngine.js');
+var express = require('./app/express.js');
+var bodyParser = require('./app/middleware/bodyParser.js');
+var plainEngine = require('./app/lib/plainEngine.js');
 var path = require('path');
 
 var app = express();
@@ -29,12 +29,7 @@ app.engine('html', plainEngine.__express);
 // 路由处理
 app.use('/', function (req, res) {
     console.log('middleware route:/');
-    res.send('hello world...');
-});
-
-app.use('/index', function (req, res) {
-    console.log('middleware route:/index');
-    res.render('index');
+    res.end('hello world...');
 });
 
 app.use(function (req, res) {
