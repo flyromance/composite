@@ -6,15 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="/static/css/common.css" type="text/css">
+    <link rel="stylesheet" href="css/common.css" type="text/css">
+    <style>
+        .page-wrap .body {
+            margin: 0 auto;
+        }
+
+        #page-index .body {
+            width: 1800px;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="page-index">
+    <div class="page-wrap" id="page-index">
+
+        <div class="header">
+            header
+        </div>
+
         <div class="body">
-            <div class="layout-wrap">
-                <div class="layout-main-wrap">
-                    <div class="layout-main ml-600 mr-600">
+            <div class="col-wrap">
+                <div class="col-main-wrap">
+                    <div class="col-main ml600 mr600">
                         <h2>ui组件</h2>
                         <ul>
                             <li><a href="/lazyload.html">scroll-lazyload-懒加载</a></li>
@@ -33,7 +47,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="layout-left ml--all w-600">
+                <div class="col-left w600">
                     <h2>JavaScript-核心</h2>
                     <ul>
                         <li><a href="/">extend-扩展</a></li>
@@ -52,18 +66,23 @@
                         <li><a href="/">storage</a></li>
                     </ul>
                 </div>
-                <div class="layout-right ml--600 w-600">
+                <div class="col-right ml-600 w600">
                     <h2>css</h2>
                     <ul>
-                    	<li><a href="/">display position float line-heigth</a></li>
-                    	<li><a href="/">双飞燕-圣杯布局</a></li>
-						<li><a href="/grid.html">栅格</a></li>
-						<li><a href="/">理解</a></li>
-						<li><a href="">淘宝首页</a></li>
+                        <li><a href="/">display position float line-heigth</a></li>
+                        <li><a href="/">双飞燕-圣杯布局</a></li>
+                        <li><a href="/grid.html">栅格</a></li>
+                        <li><a href="/">理解</a></li>
+                        <li><a href="">淘宝首页</a></li>
                     </ul>
                 </div>
             </div>
         </div>
+
+        <div class="footer">
+            footer
+        </div>
+
     </div>
 </body>
 
