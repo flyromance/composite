@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+	function compose() {
+		var args = [].slice.call(arguments);
+		if (args.length == 0) {
+			return function (arg) {
+				return arg;
+			}
+		}
+
+		if (args.length == 1) {
+			return args[0];
+		}
+
+		return function (arg) {
+			return args.slice(0, -1).reduceRight(function (composed, f) {
+				return f(composed)
+			}, args[args.length - 1](arg))
+		}
+	}
+	</script>
+</body>
+</html>
