@@ -1,7 +1,12 @@
 'use strict';
 
+// if (typeof window.Promise === 'function') {
+//     return;
+// }
+
 // https://github.com/calvinmetcalf/immediate
-var immediate = require('immediate');
+// var immediate = require('immediate');
+var immediate = setTimeout;
 
 function INTERNAL() {}
 
@@ -21,7 +26,6 @@ var PENDING = 0;
 var FULFILLED = 1;
 var REJECTED = 2;
 
-module.exports = Promise;
 
 function Promise(resolver) {
     if (!isFunction(resolver)) {

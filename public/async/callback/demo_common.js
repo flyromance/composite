@@ -12,7 +12,7 @@ function final_fn(arg) {
     console.log('参数为 ' + arg + ' , final...');
 }
 
-// 异步嵌套: 每个模块有依赖，也可以没有依赖
+// 异步嵌套: 模块依赖没有要求
 (function() {
     async(1, function(value) {
         async(value, function(value) {
@@ -28,7 +28,7 @@ function final_fn(arg) {
 }());
 
 
-// 串行: 每个模块有依赖，也可以没有依赖
+// 串行: 模块依赖没有要求
 (function() {
     var missions = [1, 2, 3, 4, 5, 6];
     var result = [];
@@ -47,7 +47,7 @@ function final_fn(arg) {
 })();
 
 
-// 并行: 每个模块没有依赖
+// 并行: 必须保证模块没有依赖
 (function() {
     // return;
     var items = [1, 2, 3, 4, 5, 6];

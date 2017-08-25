@@ -1,6 +1,8 @@
 /*!
  * 本地化存储(localStorage) 组件
  *
+ * https://github.com/machao/localStorage
+ * 
  * 版权所有(C) 2013 马超 (zjcn5205@yeah.net)
  *
  * 这一程序是自由软件，你可以遵照自由软件基金会出版的GNU通用公共许可证条款来修改和重新发布
@@ -14,21 +16,21 @@
  *[功能描述]
  * 给不支持本地存储的浏览器创建一个 window.localStorage 对象来提供类似接口
  * 该对象支持以下方法或属性
-	setItem : function(key, value)
-	getItem : function(key)
-	removeItem : function(key)
-	clear : function()
-	length : int
-	key : function(i)
-	isVirtualObject : true
+    setItem : function(key, value)
+    getItem : function(key)
+    removeItem : function(key)
+    clear : function()
+    length : int
+    key : function(i)
+    isVirtualObject : true
  * 二次包装的接口 window.LS 提供以下方法和属性（如果有jQuery则同样会扩展该对象），推荐使用
-	set : function(key, vlaue)
-	get : function(key)
-	remove : function(key)
-	clear : function()
-	each : function(callback) callback接受两个参数 key 和 value
-	obj : function() 返回一个对象描述的localStorage副本
-	length : int
+    set : function(key, vlaue)
+    get : function(key)
+    remove : function(key)
+    clear : function()
+    each : function(callback) callback接受两个参数 key 和 value
+    obj : function() 返回一个对象描述的localStorage副本
+    length : int
  * 
  *[已知问题、使用限制]
  * 原生本地存储的key是区分大小写的，模拟对象不区分（因为userData不区分key的大小写）
@@ -53,7 +55,8 @@
  */
 (function(window) {
     //准备模拟对象、空函数等
-    var LS, noop = function() {},
+    var LS, 
+        noop = function() {},
         document = window.document,
         notSupport = { set: noop, get: noop, remove: noop, clear: noop, each: noop, obj: noop, length: 0 };
 
@@ -138,10 +141,9 @@
             spfix = "m-_-c",
             reg1 = new RegExp("^" + prefix),
             reg2 = new RegExp(spfix, "g"),
-            encode = function(key) {
-                return encodeURIComponent(prefix + key).replace(/%/g, spfix); },
-            decode = function(key) {
-                return decodeURIComponent(key.replace(reg2, "%")).replace(reg1, ""); };
+            encode = function(key) { return encodeURIComponent(prefix + key).replace(/%/g, spfix); },
+            decode = function(key) { return decodeURIComponent(key.replace(reg2, "%")).replace(reg1, ""); };
+
         //创建模拟对象
         LS = {
             length: attrs.length,
@@ -187,8 +189,7 @@
     window.LS = !LS ? notSupport : {
         set: function(key, value) {
             //fixed iPhone/iPad 'QUOTA_EXCEEDED_ERR' bug
-            if (this.get(key) !== undefined)
-                this.remove(key);
+            if (this.get(key) !== undefined) this.remove(key);
             LS.setItem(key, value);
             this.length = LS.length;
         },

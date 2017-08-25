@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script type="text/javascript" src="my.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    // Promise.noConflict();
+
+    // var promise = new Promise(function(resolve, reject) {
+    //     setTimeout(function(){
+    //         resolve(123);
+    //         // reject(123);
+    //     }, 2000);
+    // });
+
+    // promise.then(function (val) {
+    //     // console.log(val);
+    //     throw new Error(val);
+    // })
+    // .catch(function (err) {
+    //     console.log(err);
+    // })
+    // .then(function (val) {
+    //     console.log(val);
+    //     return 123;
+    // })
+    // .then(function(val) {
+    //     // return val + 123;
+
+    //     return new Promise(function (resolve, reject) {
+    //         setTimeout(function() {
+    //             resolve(val + 1);
+    //             // reject(val - 1);
+    //         }, 1000);
+    //     });
+    // })
+    // .then(function(val) {
+    //     console.log(val);
+    // }, function (err) {
+    //     console.log(err);
+    // });
+
+    function createPromise(num, isRejected) {
+        return new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                isRejected === false ? reject(num) : resolve(num)
+            }, num * 1000);
+        });
+    }
+
+    Promise.all([createPromise(2, false), createPromise(4, 1)]).then(function (val) {
+        console.log(val)
+    }, function (err) {
+        console.log('error', err);
+    });
+
+    // Promise.race([createPromise(2, false), createPromise(4, false)]).then(function (val) {
+    //     console.log(val)
+    // }, function (err) {
+    //     console.log('error', err);
+    // });
+
+    </script>
+</body>
+
+</html>

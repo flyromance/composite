@@ -1,5 +1,56 @@
-(function() {
+/*
+localStorage.getItem(key)
+localStorage.setItem(key, value)
+localStorage.removeItem(name)
+localStorage.length 返回存储中总条数
+localStorage.key(1) 传入number索引, 返回key值
+localStorage.clear 清除所有
+
+www.btime.com 和 user.btime.com 不共享数据
+www.btime.com 、www.btime.com/ss 共享数据
+*/
+
+(function(g, factory) {
+    g.LocalCache = factory(g)
+})(this, function(g) {
     var _cache = {};
+
+    function mixin() {
+        var isDeep = false;
+        var args = [].slice.apply(arguments);
+        var target, sources;
+        if (typeof args[0] === 'boolean') {
+            isDeep = args[0];
+            target = args[1];
+            sources = args.slice(2);
+        } else {
+            target = args[0];
+            sources = args.slice(1);
+        }
+
+        var lens = sources.length;
+        var source, i, key, value;
+        target = typeof target === 'object' ? target : {};
+
+        for (i = 0; i < lens; i++) {
+            source = sources[i];
+            for (key in source) {
+                if (!source.hasOwnProperty(key)) continue;
+                value = source[key];
+                if (typeof value === 'object' && isDeep) {
+                    if (typeof target[key] === 'object') {
+                        target[key] = mixin(isDeep, target[key], value);
+                    } else {
+                        target[key] = mixin(isDeep, {}, value);
+                    }
+                } else if (typeof value !== 'undefined') {
+                    target[key] = value;
+                }
+            }
+        }
+
+        return target;
+    }
 
     // 支持命名空间格式，因为userData有命名空间形式
     _cache.localStorage = {
@@ -38,6 +89,7 @@
             }
         }
     };
+
     _cache.userData = {
         test: function() {
             try {
@@ -92,46 +144,57 @@
                     var attrs = this._owners[prefix].XMLDocument.documentElement.attributes;
                     this._owners[prefix].load(prefix);
                     for (var n = 0, r; r = attrs[n]; n++) {
-                        this._owners[e].removeAttribute(r.name);
+                        this._owners[prefix].removeAttribute(r.name);
                     }
-                    this._owners[e].save(e)
+                    this._owners[prefix].save(prefix)
                 }
             }
         }
     };
+
     var _storage = function() {
-        return _cache.localStorage.test() ? _cache.localStorage.methods : _cache.userData.test() ? _cache.userData.methods : {
-            init: function() {},
-            get: function() {},
-            set: function() {},
-            remove: function() {},
-            clear: function() {}
-        }
+        return _cache.localStorage.test() ?
+            _cache.localStorage.methods :
+            _cache.userData.test() ?
+            _cache.userData.methods : {
+                init: function() {},
+                get: function() {},
+                set: function() {},
+                remove: function() {},
+                clear: function() {}
+            }
     }();
 
-    // 真正的构造函数
-    var LocalCache = function(prefix) {
-        this.prefix = prefix || 'btime';
+    var config = {
+        prefix: ''
+    };
+
+    function LocalCache(prefix) {
+        this.prefix = prefix || config.prefix;
         this.storeSvc = _storage;
-        this.storeSvc && this.storeSvc.init(prefix || 'btime');
-    };
-    LocalCache.serialize = function(e) {
-        return JSON.stringify(e)
-    };
-    LocalCache.unserialize = function(e) {
-        return JSON.parse(e)
-    };
+        this.storeSvc && this.storeSvc.init(this.prefix);
+    }
+
+    LocalCache.setConf = function(conf, value) {
+        if (typeof conf == 'object') {
+            mixin(true, config, conf)
+        } else if (typeof conf === 'string') {
+            config[conf] = value;
+        }
+    }
+
     LocalCache.prototype = {
+        constructor: LocalCache,
         set: function(name, value) {
             try {
-                return this.storeSvc.set(this.prefix, name, LocalCache.serialize(value));
+                return this.storeSvc.set(this.prefix, name, JSON.stringify(value));
             } catch (e) {
                 return false;
             }
         },
         get: function(name) {
             try {
-                return LocalCache.unserialize(this.storeSvc.get(this.prefix, name))
+                return JSON.prase(this.storeSvc.get(this.prefix, name))
             } catch (e) {}
         },
         remove: function(name) {
@@ -145,5 +208,6 @@
             } catch (e) {}
         }
     };
-    window.LocalCache = LocalCache;
-})();
+
+    return LocalCache
+});

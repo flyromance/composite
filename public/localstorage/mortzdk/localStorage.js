@@ -1,3 +1,6 @@
+/*
+ * https://github.com/mortzdk/localStorage
+ */
 (function (window, document, location, navigator, undefined, f, t) {
 	"use strict";
 	
