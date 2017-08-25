@@ -1,72 +1,26 @@
-var http = require('http');
-var parse = require('url').parse;
-var querystring = require('querystring');
-var path = require('path');
-var fs = require('fs');
+var myconnect = require('./app/connect.js');
+var plainEngine = require('./app/plainEngine.js');
 
-var server = http.createServer(function (req, res) {
-	var url = parse(req.url);
+var app = myconnect();
 
-	if (url.pathname.indexOf('/static') == 0) {
-		fs.readFile('.' + url.pathname, 'utf-8', function (err, data) {
-			if (err) {
-				console.log('error');
-				res.statusCode = 404;
-				res.end('not found...');
-			} else {
-				var ext = path.parse(url.pathname).ext.substring(1);
-				var type = 'text/plain';
-				switch (ext) {
-					case 'js':
-						type = 'application/javascript';
-						break;
-					case 'css':
-						type = 'text/css';
-						break;
-					case 'png':
-						type = 'image/png';
-						break;
-					case 'jpg':
-						type = 'image/jpg';
-						break;
-					default:
-						break;
-				}
-
-				// Content-Length是指字节长度，不是字符串长度，所以不能直接用data.length;
-				// 一个中文字、中文符号3个字节，数字、字母、英文符号、空格为1个字节
-				res.setHeader('Content-Length', Buffer.byteLength(data)); 
-				res.setHeader('Content-Type', type);
-				res.statusCode = 200;
-				res.write(data);
-				res.end();
-			}
-		});
-	} else {
-		var filename;
-		if (url.path == '/') {
-			filename = 'index.html';
-		} else {
-			filename = url.pathname;
-		}
-
-		fs.readFile(__dirname + '/view/' + filename, 'utf-8', function (err, data) {
-			if (err) {
-				console.log('error');
-				res.statusCode = 404;
-				res.end('not found...');
-			} else {
-				res.setHeader('Content-Length', Buffer.byteLength(data));
-				res.setHeader('Content-Type', 'text/html');
-				// res.setHeader('Connection', 'close');
-				res.statusCode = 200;
-				res.write(data);
-				res.end();
-			}
-		});
-	}
+// 中间件
+app.use(function (req, res, next) {
+    console.log('logger');
+    next();
 });
 
-server.listen(8899, function () {
-	console.log('server listenning 8899...');
-});	
+app.set('views', './view'); // 视图引擎：内部也是中间件，给res添加方法
+app.set('view engine', 'html'); // render(index) 给index添加的默认后缀
+app.engine('html', plainEngine.__express); // 指定后缀的渲染引擎
+
+// 静态资源：其实就是设置中间件
+app.static('./public');
+
+// 路由：添加路由中间件
+app.get('/', function (req, res) {
+    res.render('index');
+});
+
+app.listen(5566, function () {
+    console.log('listenning on port ' + 5566);
+});
