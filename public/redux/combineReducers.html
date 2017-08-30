@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script type="text/javascript" src="redux.js"></script>
+    <script type="text/javascript" src="../lodash/lodash.js"></script>
+</head>
+
+<body>
+
+<script>
+var a = '30agufimmeh8g4ba01a5qcbnjnt';
+	function reducerA(state, action) {
+		state = state || 0;
+		switch (action.type) {
+			case 'add':
+				state++;
+				break;
+			case 'min':
+				state--;
+				break;
+			default:
+				state;
+				break;
+		}
+		return state;
+	}
+
+	function reducerB(state, action) {
+		state = state || [];
+		var _state = state.slice();
+
+		switch (action.type) {
+			case 'add':
+				_state.push(action.payload);
+				break;
+			case 'min':
+				_state.pop();
+				break;
+			default:
+				_state;
+				break;
+		}
+		return _state;
+	}
+
+	function reducerC(state, action) {
+
+	}
+
+	var reducerAB = Redux.combineReducers({
+		a: reducerA,
+		b: reducerB,
+	});
+
+	var store = Redux.createStore(reducerAB, {
+		a: 0,
+		b: []
+	});
+console.log(store.getState());
+
+	store.dispatch({
+		type: 'add', 
+		payload: 1
+	});
+console.log(store.getState());
+
+</script>
+
+</body>
+
+</html>

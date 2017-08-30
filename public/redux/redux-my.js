@@ -48,7 +48,7 @@
                 // return ret;
 
                 // 使用[].reduce
-                return funcs.reduceRight(function(composed, f) {
+                return funcs.slice(0, -1).reduceRight(function(composed, f) {
                     return f(composed);
                 }, funcs[lens - 1].apply(null, args));
             }

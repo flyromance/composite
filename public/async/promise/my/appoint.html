@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src='appoint.js'></script>
+</head>
+
+<body>
+    <a href="https://github.com/nswbmw/appoint">appoint - github</a> Inspired by 
+    <a href="https://github.com/calvinmetcalf/lie">[lie] - github</a>
+    <p>依赖<a href="https://github.com/calvinmetcalf/immediate">immediate</a></p>
+    <script type="text/javascript">
+
+    var promise = new Promise(function(resolve, reject) {
+    	// resolve(123);
+        setTimeout(function() {
+            resolve(123);
+            // reject(123);
+        }, 2000);
+    });
+
+    promise.then(function(val) {
+        console.log(val);
+        // throw new Error('hha');
+    })
+    // .catch(function (err) {
+    //     console.log(err);
+    // })
+    // .then(function (val) {
+    //     console.log(val);
+    //     return 123;
+    // })
+    // .then(function(val) {
+    //     // return val + 123;
+
+    //     return new Promise(function (resolve, reject) {
+    //         setTimeout(function() {
+    //             resolve(val + 1);
+    //             // reject(val - 1);
+    //         }, 1000);
+    //     });
+    // })
+    // .then(function(val) {
+    //     console.log(val);
+    // }, function (err) {
+    //     console.log(err);
+    // });
+
+    promise.then(function(val) { console.log(val) })
+
+
+    console.log('first');
+    </script>
+</body>
+
+</html>
