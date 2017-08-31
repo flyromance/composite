@@ -1,5 +1,5 @@
 var myconnect = require('./app/connect.js');
-var plainEngine = require('./app/plainEngine.js');
+var plainEngine = require('./app/lib/plainEngine.js');
 
 var app = myconnect();
 
@@ -21,6 +21,6 @@ app.get('/', function (req, res) {
     res.render('index');
 });
 
-app.listen(5566, function () {
-    console.log('listenning on port ' + 5566);
+app.listen(6000, function () {
+    console.log('listenning on port ' + 6000);
 });

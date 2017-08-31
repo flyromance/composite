@@ -37,6 +37,8 @@ app.use(function (req, res) {
     res.send(404, 'haha Not Found');
 });
 
-app.listen(5566, function () {
-    console.log('server start on port 5566...');
+var port = process.env.PORT || 5000;
+console.log(process.env.PORT);
+app.listen(port, function () {
+    console.log(`server start on port ${port}...`);
 });

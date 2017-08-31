@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="professional-javascript.js"></script>
+    <script src=""></script>
 </head>
 <body>
+<h1>iframe 跨域</h1>
 <!--
     模拟跨域环境
     0、C:\xampp\apache\conf\httpd.conf：修改默认的本地网站文件目录，如下：
@@ -83,14 +84,6 @@
     // frame.contentDocument || frame.contentWindow.document
 </script>
 
- <!--jsonp 跨域解决方案！-->
-<script type="text/javascript">
-    // 这里的jsonp函数名，要与请求（如下面b.ajax.com/jsonp.js）返回数据中 执行函数名一致！！！
-    function jsonp(data){
-        alert(data.name);
-    }
-</script>
-<script src="http://b.ajax.com/jsonp.js"></script>
 
 </body>
 </html>

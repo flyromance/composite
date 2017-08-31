@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Page2</h1>
+    <button onclick="fun1();">Test</button>
+    <script>
+    function fun1() {
+        var parentTitle = window.parent.getPage1Title();
+        alert(parentTitle);
+    }
+    </script>
+    <script>
+    var re = /(^|\?)callback=([^=&#]*)/;
+    var match = re.exec(location.search);
+    if (match || match[2]) {
+        window.parent[match[2]](3333333);
+    }
+    </script>
+</body>
+
+</html>
