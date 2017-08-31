@@ -13,7 +13,8 @@
       document = window.document,
       elementDisplay = {},
       classCache = {},
-      cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1, 'opacity': 1, 'z-index': 1, 'zoom': 1 },
+      cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 
+        'line-height': 1, 'opacity': 1, 'z-index': 1, 'zoom': 1 },
       fragmentRE = /^\s*<(\w+|!)[^>]*>/,
       singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
       tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
@@ -454,7 +455,7 @@
       slice: function() {
         return $(slice.apply(this, arguments))
       },
-
+      
       ready: function(callback) {
         // need to check if document.body exists for IE as that browser reports
         // document ready when it hasn't yet created the body element
@@ -866,10 +867,9 @@
     }
 
     // for now
-    $.fn.detach = $.fn.remove
+    $.fn.detach = $.fn.remove;
 
     // Generate the `width` and `height` functions
-    ;
     ['width', 'height'].forEach(function(dimension) {
       var dimensionProperty =
         dimension.replace(/./, function(m) { return m[0].toUpperCase() })
@@ -1018,7 +1018,8 @@
 
     function add(element, events, fn, data, selector, delegator, capture) {
       var id = zid(element),
-        set = (handlers[id] || (handlers[id] = []))
+        set = handlers[id] || (handlers[id] = []);
+
       events.split(/\s/).forEach(function(event) {
         if (event == 'ready') return $(document).ready(fn)
         var handler = parse(event)
@@ -1131,6 +1132,7 @@
     $.fn.delegate = function(selector, event, callback) {
       return this.on(event, selector, callback)
     }
+
     $.fn.undelegate = function(selector, event, callback) {
       return this.off(event, selector, callback)
     }
@@ -1161,12 +1163,12 @@
       if (callback === false) callback = returnFalse
 
       return $this.each(function(_, element) {
-        if (one) autoRemove = function(e) {
+        one && autoRemove = function(e) {
           remove(element, e.type, callback)
           return callback.apply(this, arguments)
         }
 
-        if (selector) delegator = function(e) {
+        selector && delegator = function(e) {
           var evt, match = $(e.target).closest(selector, element).get(0)
           if (match && match !== element) {
             evt = $.extend(createProxy(e), { currentTarget: match, liveFired: element })
@@ -1177,6 +1179,7 @@
         add(element, event, callback, data, selector, delegator || autoRemove)
       })
     }
+
     $.fn.off = function(event, selector, callback) {
       var $this = this
       if (event && !isString(event)) {
@@ -1222,10 +1225,9 @@
         })
       })
       return result
-    }
+    };
 
     // shortcut methods for `.bind(event, fn)` for each event type
-    ;
     ('focusin focusout focus blur load resize scroll unload click dblclick ' +
       'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave ' +
       'change select keydown keypress keyup error').split(' ').forEach(function(event) {
@@ -1234,14 +1236,17 @@
           this.bind(event, callback) :
           this.trigger(event)
       }
-    })
+    });
 
     $.Event = function(type, props) {
       if (!isString(type)) props = type, type = props.type
       var event = document.createEvent(specialEvents[type] || 'Events'),
         bubbles = true
-      if (props)
-        for (var name in props)(name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
+      if (props) {
+        for (var name in props) {
+          (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
+        }
+      }
       event.initEvent(type, bubbles, true)
       return compatible(event)
     }
@@ -1422,7 +1427,10 @@
       //Used to handle the raw response data of XMLHttpRequest.
       //This is a pre-filtering function to sanitize the response.
       //The sanitized response should be returned
-      dataFilter: empty
+      dataFilter: empty,
+      // dataType: '',
+      // contentType: '',
+      // async: true,
     }
 
     function mimeToDataType(mime) {
@@ -1478,9 +1486,10 @@
         settings.url = appendQuery(settings.url, '_=' + Date.now())
 
       if ('jsonp' == dataType) {
-        if (!hasPlaceholder)
+        if (!hasPlaceholder) {
           settings.url = appendQuery(settings.url,
             settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')
+        }
         return $.ajaxJSONP(settings, deferred)
       }
 
@@ -1490,7 +1499,7 @@
         protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
         xhr = settings.xhr(),
         nativeSetHeader = xhr.setRequestHeader,
-        abortTimeout
+        abortTimeout;
 
       if (deferred) deferred.promise(xhr)
 
@@ -1515,9 +1524,9 @@
           if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
             dataType = dataType || mimeToDataType(settings.mimeType || xhr.getResponseHeader('content-type'))
 
-            if (xhr.responseType == 'arraybuffer' || xhr.responseType == 'blob')
+            if (xhr.responseType == 'arraybuffer' || xhr.responseType == 'blob') {
               result = xhr.response
-            else {
+            } else {
               result = xhr.responseText
 
               try {
