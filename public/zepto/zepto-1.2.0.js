@@ -1,4 +1,6 @@
 /* Zepto v1.2.0 - zepto event ajax form ie - zeptojs.com/license */
+// 源码 https://juejin.im/post/59a355696fb9a0248510276b?utm_source=gold_browser_extension
+
 (function(global, factory) {
   if (typeof define === 'function' && define.amd)
     define(function() { return factory(global) })
@@ -252,15 +254,17 @@
     }
 
     function extend(target, source, deep) {
-      for (key in source)
+      for (key in source) {
         if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
           if (isPlainObject(source[key]) && !isPlainObject(target[key]))
             target[key] = {}
           if (isArray(source[key]) && !isArray(target[key]))
             target[key] = []
           extend(target[key], source[key], deep)
+        } else if (source[key] !== undefined) {
+          target[key] = source[key]
         }
-      else if (source[key] !== undefined) target[key] = source[key]
+      }
     }
 
     // Copy all but undefined properties from one or more
@@ -1099,6 +1103,8 @@
       }
 
     function compatible(event, source) {
+      // event对象上是没有isDefaultPrevented方法的，
+      // 只有preventDefalut stopPropagation stopImmediatePropagation方法
       if (source || !event.isDefaultPrevented) {
         source || (source = event)
 
@@ -1115,8 +1121,9 @@
 
         if (source.defaultPrevented !== undefined ? source.defaultPrevented :
           'returnValue' in source ? source.returnValue === false :
-          source.getPreventDefault && source.getPreventDefault())
+          source.getPreventDefault && source.getPreventDefault()) {
           event.isDefaultPrevented = returnTrue
+        }
       }
       return event
     }
@@ -1240,13 +1247,19 @@
 
     $.Event = function(type, props) {
       if (!isString(type)) props = type, type = props.type
+
+      // UIEvent等等...
       var event = document.createEvent(specialEvents[type] || 'Events'),
-        bubbles = true
+        bubbles = true；
       if (props) {
         for (var name in props) {
           (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
         }
       }
+
+      // xxx.initEvent(click, bubbles是否冒泡, cancelable能否被取消)
+      // initEvent将会被废弃，建议之后用new Event('click', {bubbles: true, cancelable: true})
+      // new UIEvent('xxx', {})
       event.initEvent(type, bubbles, true)
       return compatible(event)
     }
@@ -1284,6 +1297,7 @@
     // Number of active Ajax requests
     $.active = 0
 
+    // 只有$.active为0时，才会触发
     function ajaxStart(settings) {
       if (settings.global && $.active++ === 0) triggerGlobal(settings, null, 'ajaxStart')
     }
@@ -1296,8 +1310,9 @@
     function ajaxBeforeSend(xhr, settings) {
       var context = settings.context
       if (settings.beforeSend.call(context, xhr, settings) === false ||
-        triggerGlobal(settings, context, 'ajaxBeforeSend', [xhr, settings]) === false)
+        triggerGlobal(settings, context, 'ajaxBeforeSend', [xhr, settings]) === false) {
         return false
+      }
 
       triggerGlobal(settings, context, 'ajaxSend', [xhr, settings])
     }
@@ -1310,6 +1325,7 @@
       triggerGlobal(settings, context, 'ajaxSuccess', [xhr, settings, data])
       ajaxComplete(status, xhr, settings)
     }
+
     // type: "timeout", "error", "abort", "parsererror"
     function ajaxError(error, type, xhr, settings, deferred) {
       var context = settings.context
@@ -1318,6 +1334,7 @@
       triggerGlobal(settings, context, 'ajaxError', [xhr, settings, error || type])
       ajaxComplete(type, xhr, settings)
     }
+
     // status: "success", "notmodified", "error", "timeout", "abort", "parsererror"
     function ajaxComplete(status, xhr, settings) {
       var context = settings.context
@@ -1378,6 +1395,7 @@
         responseData = arguments
       }
 
+      // xxx?xxx=222&?callback=?
       script.src = options.url.replace(/\?(.+)=\?/, '?$1=' + callbackName)
       document.head.appendChild(script)
 
@@ -1411,9 +1429,9 @@
       // IIS returns Javascript as "application/x-javascript"
       accepts: {
         script: 'text/javascript, application/javascript, application/x-javascript',
-        json: jsonType,
+        json: jsonType, // application/json
         xml: 'application/xml, text/xml',
-        html: htmlType,
+        html: htmlType, // text/html
         text: 'text/plain'
       },
       // Whether the request is to another domain
@@ -1428,11 +1446,15 @@
       //This is a pre-filtering function to sanitize the response.
       //The sanitized response should be returned
       dataFilter: empty,
-      // dataType: '',
-      // contentType: '',
-      // async: true,
+      // dataType: '', // 浏览器想要的数据类型
+      // contentType: '', // 设置到request header上的字段，告诉服务器传送的数据类型
+      // async: true, // 异步请求
+      // jsonp: 'callback1', // ?callback1=zepto123312, key就是jsonp指定的, value是内部生成的
     }
 
+    /*
+     * @param mime {string} 为 response header：content-type 的值
+     */
     function mimeToDataType(mime) {
       if (mime) mime = mime.split(';', 2)[0]
       return mime && (mime == htmlType ? 'html' :
@@ -1448,20 +1470,26 @@
 
     // serialize payload and append it to the URL for GET requests
     function serializeData(options) {
-      if (options.processData && options.data && $.type(options.data) != "string")
+      if (options.processData && options.data && $.type(options.data) != "string") {
         options.data = $.param(options.data, options.traditional)
-      if (options.data && (!options.type || options.type.toUpperCase() == 'GET' || 'jsonp' == options.dataType))
-        options.url = appendQuery(options.url, options.data), options.data = undefined
+      }
+      if (options.data && (!options.type || options.type.toUpperCase() == 'GET' || 'jsonp' == options.dataType)) {
+        options.url = appendQuery(options.url, options.data);
+        options.data = undefined;
+      }
     }
 
     $.ajax = function(options) {
       var settings = $.extend({}, options || {}),
         deferred = $.Deferred && $.Deferred(),
-        urlAnchor, hashIndex
-      for (key in $.ajaxSettings)
-        if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
+        urlAnchor, hashIndex;
 
-      ajaxStart(settings)
+      // var settings = $.extend({}, $.ajaxSettings, options || {})
+      for (key in $.ajaxSettings) {
+        if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
+      }
+
+      ajaxStart(settings);
 
       if (!settings.crossDomain) {
         urlAnchor = document.createElement('a')
@@ -1479,12 +1507,11 @@
         hasPlaceholder = /\?.+=\?/.test(settings.url)
       if (hasPlaceholder) dataType = 'jsonp'
 
-      if (settings.cache === false || (
-          (!options || options.cache !== true) &&
-          ('script' == dataType || 'jsonp' == dataType)
-        ))
+      if (settings.cache === false || 
+          ((!options || options.cache !== true) && ('script' == dataType || 'jsonp' == dataType))) {
         settings.url = appendQuery(settings.url, '_=' + Date.now())
-
+      }
+      
       if ('jsonp' == dataType) {
         if (!hasPlaceholder) {
           settings.url = appendQuery(settings.url,
@@ -1503,17 +1530,31 @@
 
       if (deferred) deferred.promise(xhr)
 
+      // 告诉服务器本次是ajax请求，区分普通的请求
       if (!settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
+
+      // 告诉服务器，本浏览器能识别的类型
       setHeader('Accept', mime || '*/*')
+
       if (mime = settings.mimeType || mime) {
         if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
+
+        // 这么设置之后，如果服务器没有返回content-type字段，浏览器会按照这个设置的值来处理xhr.response返回值
+        // 也就是说，浏览器把服务端的返回值，按照设置的值得处理逻辑，来把返回值放在对应的responseText或者response上
+        // overrideMimeType是level1.1标准
+        // 2.0标准中可以使用: xhr.responseType = 'xx/ss' 来实现相同的功能
         xhr.overrideMimeType && xhr.overrideMimeType(mime)
       }
-      if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
-        setHeader('Content-Type', settings.contentType || 'application/x-www-form-urlencoded')
 
-      if (settings.headers)
+      if (settings.contentType || 
+        (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET')) {
+        setHeader('Content-Type', settings.contentType || 'application/x-www-form-urlencoded')
+      }
+
+      if (settings.headers) {
         for (name in settings.headers) setHeader(name, settings.headers[name])
+      }
+
       xhr.setRequestHeader = setHeader
 
       xhr.onreadystatechange = function() {
@@ -1557,19 +1598,26 @@
       var async = 'async' in settings ? settings.async : true
       xhr.open(settings.type, settings.url, async, settings.username, settings.password)
 
-      if (settings.xhrFields)
-        for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
+      if (settings.xhrFields) {
+        // 如果是跨域请求，并且request header上要带上cookie，必须设置 xhr.withCredentials = true
+        for (name in settings.xhrFields) {
+          xhr[name] = settings.xhrFields[name]
+        }
+      }
 
       for (name in headers) nativeSetHeader.apply(xhr, headers[name])
 
-      if (settings.timeout > 0) abortTimeout = setTimeout(function() {
-        xhr.onreadystatechange = empty
-        xhr.abort()
-        ajaxError(null, 'timeout', xhr, settings, deferred)
-      }, settings.timeout)
+      if (settings.timeout > 0) {
+        abortTimeout = setTimeout(function() {
+          xhr.onreadystatechange = empty
+          xhr.abort()
+          ajaxError(null, 'timeout', xhr, settings, deferred)
+        }, settings.timeout)
+      }
 
       // avoid sending empty string (#319)
       xhr.send(settings.data ? settings.data : null)
+
       return xhr
     }
 
