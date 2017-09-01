@@ -979,7 +979,7 @@
       isString = function(obj) { return typeof obj == 'string' },
       handlers = {},
       specialEvents = {},
-      focusinSupported = 'onfocusin' in window,
+      focusinSupported = 'onfocusin' in window, 
       focus = { focus: 'focusin', blur: 'focusout' },
       hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
 
@@ -1446,8 +1446,8 @@
       //This is a pre-filtering function to sanitize the response.
       //The sanitized response should be returned
       dataFilter: empty,
-      // dataType: '', // 浏览器想要的数据类型
-      // contentType: '', // 设置到request header上的字段，告诉服务器传送的数据类型
+      // dataType: '', // 会对应一个mime-type，设置到request header的accept上，告诉服务器能接受的数据类型
+      // contentType: '', // 设置到request header的content-type上，告诉服务器传送的数据类型
       // async: true, // 异步请求
       // jsonp: 'callback1', // ?callback1=zepto123312, key就是jsonp指定的, value是内部生成的
     }
