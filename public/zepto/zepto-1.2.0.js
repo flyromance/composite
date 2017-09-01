@@ -1001,6 +1001,7 @@
       })
     }
 
+    // click.fan.long => {e: click, ns: 'fan long'}
     function parse(event) {
       var parts = ('' + event).split('.')
       return { e: parts[0], ns: parts.slice(1).sort().join(' ') }
@@ -1011,9 +1012,7 @@
     }
 
     function eventCapture(handler, captureSetting) {
-      return handler.del &&
-        (!focusinSupported && (handler.e in focus)) ||
-        !!captureSetting
+      return handler.del && (!focusinSupported && (handler.e in focus)) || !!captureSetting
     }
 
     function realEvent(type) {
@@ -1155,6 +1154,8 @@
 
     $.fn.on = function(event, selector, data, callback, one) {
       var autoRemove, delegator, $this = this
+
+      // this.on({click: fn, blur: fn}, selector, data, one)
       if (event && !isString(event)) {
         $.each(event, function(type, fn) {
           $this.on(type, selector, data, fn, one)
@@ -1162,10 +1163,15 @@
         return $this
       }
 
-      if (!isString(selector) && !isFunction(callback) && callback !== false)
+      // this.on(event, data, callback)
+      if (!isString(selector) && !isFunction(callback) && callback !== false) {
         callback = data, data = selector, selector = undefined
-      if (callback === undefined || data === false)
+      }
+
+      // this.on(evnet, callback)
+      if (callback === undefined || data === false) {
         callback = data, data = undefined
+      }
 
       if (callback === false) callback = returnFalse
 
