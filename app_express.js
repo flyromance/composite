@@ -32,6 +32,12 @@ app.use('/', function (req, res) {
     res.end('hello world...');
 });
 
+app.use('/history', function (req, res) {
+    console.log('middleware route:/');
+    res.render('history');
+});
+
+
 app.use(function (req, res) {
     console.log('middleware route...');
     res.send(404, 'haha Not Found');
