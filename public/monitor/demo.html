@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+
+<body>
+  <form action="#dddd">
+    <button>button</button>
+    <input value='213'>
+    <input value='213' type='submit'>
+    <input value='213' type='button'>
+  </form>
+
+<div id='div' bk></div>
+  <script>
+  // console.log($('button').type); // submit
+  // console.log($('input').type); // text
+
+  var div = document.getElementById('div');
+  console.log('bk' in div.attributes); // true
+  console.log(typeof div.getAttribute('bk')); // string ''
+  </script>
+</body>
+
+</html>

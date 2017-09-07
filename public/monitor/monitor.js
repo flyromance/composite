@@ -17,7 +17,8 @@
     return;
   }
 
-  var version = 'v1.4.0 (2016.01.04)',
+  var 
+    version = 'v1.4.0 (2016.01.04)',
 
     //设置__guid这个cookie存放域，如果为空，就保存在页面当前域，如果为"360.cn"，cookie会被设置到".360.cn"，依此类推
     guidCookieDomains = ['360.cn', 'so.com', 'leidian.com', 'btime.com'];
@@ -35,9 +36,12 @@
       } catch (e) {}
     })();
 
-    var doc = document,
-      nav = navigator,
+    var 
+      doc = document,
+      nav = window.navigator,
       screen = window.screen,
+
+      // 默认是子域名，如：item.btime.com
       domain = isLocal ? '' : document.domain.toLowerCase(),
       ua = nav.userAgent.toLowerCase();
 
@@ -130,7 +134,12 @@
          */
         mix: function(des, src, override) {
           for (var i in src) {
-            //这里要加一个des[i]，是因为要照顾一些不可枚举的属性
+            // 这里要加一个des[i]，是因为要照顾一些不可枚举的属性
+            // TODO: Object.assign 是不可枚举的，但是 'assign' in Object 是true
+            // override为true，强制覆盖目标对象的属性
+            // override不为true，目标对象没有声明过的属性才能被覆盖
+            // 目标对象obj.name = undefined，源对象obj.name = 12, 目标对象属性undefined也不能被覆盖...
+            // jquery的规则是：目标对象属性类型为undefined就能被覆盖
             if (override || !(des[i] || (i in des))) {
               des[i] = src[i];
             }
@@ -139,7 +148,7 @@
         },
 
         /**
-         * 将Object序列化为key=val键值对字符串，不处理val为数组的情况]
+         * 将Object序列化为key=val键值对字符串，不处理val为数组的情况
          * @param  {Object} json 需要序列化的对象
          * @return {String}      序列化后的字符串
          */
@@ -195,17 +204,17 @@
      */
     var util = {
       getColorDepth: function() {
-        return screen.colorDepth + '-bit';
+        return screen.colorDepth + '-bit'; // 24
       },
       /**
-       * 获取语言
+       * 获取语言 zh-CN
        * @return {[type]} [description]
        */
       getLanguage: function() {
         return (nav.language || nav.browserLanguage).toLowerCase();
       },
       /**
-       * 获取屏幕大小
+       * 获取屏幕大小 1920X1080
        * @return {[type]} [description]
        */
       getScreenSize: function() {
@@ -249,13 +258,18 @@
         if (is360se) {
           return "360se-noua";
         }
-
+        
+        // chrome: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53…L, like Gecko) Chrome/60.0.3112.113 Safari/537.36
+        // firefox: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
         var result = ua.match(/(msie|chrome|safari|firefox|opera|trident)/);
         result = result ? result[0] : '';
 
-        if (result == 'msie') {
+        // Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E)
+        if (result == 'msie') { // ie5-10
           result = ua.match(/msie[^;]+/) + '';
-        } else if (result == 'trident') {
+
+        } else if (result == 'trident') { // ie11(edge)
+          // Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E; rv:11.0) like Gecko
           ua.replace(/trident\/[0-9].*rv[ :]([0-9.]+)/ig, function(a, c) {
             result = 'msie ' + c;
           });
@@ -329,7 +343,8 @@
               var guidCookieDomain = guidCookieDomains[i],
                 gDomain = '.' + guidCookieDomain;
 
-              if ((domain.indexOf(gDomain) > 0 && domain.lastIndexOf(gDomain) == domain.length - gDomain.length) || domain == guidCookieDomain) {
+              if ((domain.indexOf(gDomain) > 0 && domain.lastIndexOf(gDomain) == domain.length - gDomain.length) 
+                || domain == guidCookieDomain) {
                 config.domain = gDomain;
                 break;
               }
@@ -380,6 +395,10 @@
         return ver;
       },
 
+      // 获取cid
+      // el元素的区域标识; 一直循环到html元素, 找到就中断;
+      // 规则一：el元素attributes是否有bk或者data-bk属性值
+      // 规则二：el元素的
       getContainerId: function(el) {
         var areaStr,
           name,
@@ -390,7 +409,8 @@
         }
 
         while (el) {
-          //bk模式
+          // bk模式; 
+          // <div bk></div> bk可以不设置('bk' in el.attributes 也是true, bk为''空字符串)
           if (el.attributes && ('bk' in el.attributes || 'data-bk' in el.attributes)) {
             name = el.getAttribute('bk') || el.getAttribute('data-bk');
 
@@ -399,6 +419,7 @@
               return name.substr(0, maxLength);
             }
 
+            // 如果bk为''
             if (el.id) {
               name = el.getAttribute('data-desc') || el.id;
               return name.substr(0, maxLength);
@@ -416,6 +437,7 @@
         return '';
       },
 
+      // 获取c
       getText: function(el) {
         var str = "";
 
@@ -428,6 +450,7 @@
         return StringH.trim(str).substr(0, 100);
       },
 
+      // 获取f
       getHref: function(el) {
         try {
           return el.getAttribute('data-href') || el.href || '';
@@ -474,12 +497,16 @@
         }
         return obj;
       },
+
+      // 如果返回false，此次点击不会打点！
+      // {c: 点击元素的内容, f: 点击元素的去向, cid: 点击元素区域标识}
       getClick: function(e) {
-        e = EventH.fix(e || event);
+        e = EventH.fix(e || window.event);
         var target = e.target,
           tagName = target.tagName,
           containerId = util.getContainerId(target);
 
+        // <button></button>默认的type为 'submit'
         if (target.type && (target.type == 'submit' || target.type == 'button')) {
           var form = NodeH.parentNode(target, 'FORM'),
             result = {};
@@ -585,6 +612,7 @@
 
       config: config,
 
+      // img通信；通信完后删掉(防止内存泄漏)
       sendLog: (function() {
         window.__QIHOO_MONITOR_COMMON_imgs = {};
 
@@ -602,6 +630,7 @@
         };
       })(),
 
+      // 添加基本baseParams; 拼接url和查询参数; 防止连续触发打点(100ms内只能打一次)
       buildLog: (function() {
         var lastLogParams = '';
 
@@ -609,21 +638,20 @@
           if (params === false) return;
 
           params = params || {};
-
           var baseParams = data.getBase();
           params = ObjectH.mix(baseParams, params, true);
-
-
           var logParams = url + ObjectH.encodeURIJson(params);
+
+          //100ms后允许发相同数据
           if (logParams == lastLogParams) {
             return;
           }
-
           lastLogParams = logParams;
-          setTimeout(function() { //100ms后允许发相同数据
+          setTimeout(function() { 
             lastLogParams = '';
           }, 100);
 
+          // 加上时间戳，防止缓存
           var sendParams = ObjectH.encodeURIJson(params);
           sendParams += '&t=' + (+new Date); //加上时间戳，防止缓存
 
@@ -635,6 +663,7 @@
         };
       })(),
 
+      // 打点type获取url;
       log: function(params, type) {
         type = type || 'click';
 
@@ -693,21 +722,26 @@
         return this;
       },
 
+      // 获取track打点的参数; 调用log
       getTrack: function(cookies) {
         var params = this.data.getTrack(cookies);
 
         this.log(params, 'track');
         return this;
       },
+
       /**
        * 热力图
+       * 功能：绑定mousedown事件，收集用户喜欢点击的区域
        * @return {[type]} [description]
        */
       getClickHeatmap: function(times, minutes) {
+        // 防止多次绑定
         if (this.heatmapTimer) {
           return;
         }
         this.heatmapTimer = true;
+
         var that = this;
         var positions = [];
         times = times || 10;
@@ -716,6 +750,8 @@
         var logTimer = 0;
         var log = function(flag) {
           clearTimeout(logTimer);
+
+          // 点击次数大于10，打一次点
           if (flag || positions.length > times) {
             if (!positions.length) {
               return;
@@ -728,10 +764,11 @@
             return;
           }
 
+          // 最后一次点击开始，5分钟之后，打一次点
           logTimer = setTimeout(function() {
             log(true);
           }, minutes * 60 * 1000);
-        }
+        };
 
         NodeH.on(doc, 'mousedown', function(e) {
           var pos = e.pageX + '.' + e.pageY;
@@ -741,6 +778,7 @@
         return this;
       },
 
+      // 绑定鼠标mousedown和键盘keydown事件=>打点; 
       getClickAndKeydown: function() {
         var that = this;
         NodeH.on(doc, 'mousedown', function(e) {
@@ -753,6 +791,7 @@
           that.log(params, 'click');
         });
 
+        // 防止多次绑定
         QIHOO_MONITOR_COMMON.getClickAndKeydown = function() {
           return that;
         };
