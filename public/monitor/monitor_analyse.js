@@ -168,6 +168,8 @@
           }
           return e
         },
+
+        // 3879293212461102600
         guid: function() {
           var
             t = [c.appName, c.version, c.language || c.browserLanguage, c.platform, c.userAgent, u.width, "x", u.height, u.colorDepth, o.referrer].join(""),
@@ -264,43 +266,53 @@
           n || (n = m.get(t));
           n = (parseInt(n) || 0) + 1;
 
-          Cookie.set(e, n, { 
+          Cookie.set(e, n, {
             expires: 864e5, // 1天有效期
-            path: "/" 
+            path: "/"
           });
 
           return function() {
-              return n
-            }
+            return n
+          }
         }(),
         getFlashVer: function() {
           var t = -1;
-          if (c.plugins && c.mimeTypes.length) {
-            var e = c.plugins["Shockwave Flash"];
+          if (nav.plugins && nav.mimeTypes.length) {
+            var e = nav.plugins["Shockwave Flash"];
             e && e.description && (t = e.description.replace(/([a-zA-Z]|\s)+/, "").replace(/(\s)+r/, ".") + ".0")
-          } else if (r.ActiveXObject && !r.opera) try {
-            var n = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
-            if (n) {
-              var i = n.GetVariable("$version");
-              t = i.replace(/WIN/g, "").replace(/,/g, ".")
-            }
-          } catch (a) {}
+          } else if (win.ActiveXObject && !win.opera) {
+            try {
+              var n = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
+              if (n) {
+                var i = n.GetVariable("$version");
+                t = i.replace(/WIN/g, "").replace(/,/g, ".")
+              }
+            } catch (e) {}
+          }
           return t = parseInt(t, 10)
         },
         getContainerId: function(t) {
           var e, n, r = 100;
-          for (w.areaIds && (e = new RegExp("^(" + w.areaIds.join("|") + ")$", "ig")); t;) {
+          config.areaIds && (e = new RegExp("^(" + config.areaIds.join("|") + ")$", "ig"))
+          while (t) {
             if (t.attributes && ("bk" in t.attributes || "data-bk" in t.attributes)) {
               if (n = t.getAttribute("bk") || t.getAttribute("data-bk")) return n = "bk:" + n, n.substr(0, r);
               if (t.id) return n = t.getAttribute("data-desc") || t.id, n.substr(0, r)
-            } else if (e && t.id && e.test(t.id)) return n = t.getAttribute("data-desc") || t.id, n.substr(0, r);
+            } else if (e && t.id && e.test(t.id)) {
+              return n = t.getAttribute("data-desc") || t.id, n.substr(0, r);
+            }
             t = t.parentNode
           }
           return ""
         },
         getText: function(t) {
           var e = "";
-          return e = "input" == t.tagName.toLowerCase() ? t.getAttribute("text") || t.getAttribute("data-text") || t.value || t.title || "" : t.getAttribute("text") || t.getAttribute("data-text") || t.innerText || t.textContent || t.title || "", f.trim(e).substr(0, 100)
+          if ("input" == t.tagName.toLowerCase()) {
+            e = t.getAttribute("text") || t.getAttribute("data-text") || t.value || t.title || "";
+          } else {
+            e = t.getAttribute("text") || t.getAttribute("data-text") || t.innerText || t.textContent || t.title || "";
+          }
+          return f.trim(e).substr(0, 100)
         },
         getHref: function(t) {
           try {
@@ -387,13 +399,13 @@
           return {}
         }
       },
-      w = {
+      config = { // w
         trackUrl: null,
         clickUrl: null,
         areaIds: null,
         hbLogTimer: 0
       },
-      $ = function(t) { // 
+      $ = function(t) { // b
         return document.getElementById(t)
       };
 
@@ -401,7 +413,7 @@
       version: version,
       util: util,
       data: data,
-      config: w,
+      config: config,
       sendLog: (function() {
         r.__qihoo_monitor_imgs = {};
 
@@ -481,9 +493,9 @@
         this.getClickHeatmap(10, 1);
       },
       getTrack: function(cookies, param) {
-        var n = this.data.getTrack(cookies);
-        l.isObject(param) && (n = l.mix(n, param, !0));
-        this.log(n, "track");
+        var obj = this.data.getTrack(cookies);
+        ObjectH.isObject(param) && (obj = l.mix(obj, param, true));
+        this.log(obj, "track");
 
         return this
       },
@@ -582,14 +594,14 @@
     }
   }(window);
 
-  var protocal = location.protocol.toLowerCase() === "https:" ? "https:" : "http:";
+  var protocol = location.protocol.toLowerCase() === "https:" ? "https:" : "http:";
 
   QIHOO_MONITOR.setConf({
-    trackUrl: protocal + "//s.360.cn/qdas/s.htm",
-    clickUrl: protocal + "//s.360.cn/qdas/c.htm",
-    clickHeatMapUrl: protocal + "//s.360.cn/qdas/t.htm",
-    wpoUrl: protocal + "//s.360.cn/qdas/p.htm",
-    heartbeatUrl: protocal + "//s.360.cn/qdas/h.htm"
+    trackUrl: protocol + "//s.360.cn/qdas/s.htm",
+    clickUrl: protocol + "//s.360.cn/qdas/c.htm",
+    clickHeatMapUrl: protocol + "//s.360.cn/qdas/t.htm",
+    wpoUrl: protocol + "//s.360.cn/qdas/p.htm",
+    heartbeatUrl: protocol + "//s.360.cn/qdas/h.htm"
   }).init();
 
   window.QIHOO_MONITOR = QIHOO_MONITOR;
