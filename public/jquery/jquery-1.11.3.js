@@ -588,6 +588,7 @@ function isArraylike( obj ) {
 	return type === "array" || length === 0 ||
 		typeof length === "number" && length > 0 && ( length - 1 ) in obj;
 }
+jQuery.isArraylike = isArraylike;
 var Sizzle =
 /*!
  * Sizzle CSS Selector Engine v2.2.0-pre
