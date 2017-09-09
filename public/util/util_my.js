@@ -9,8 +9,9 @@
 3、原生事件
 4、自定义事件
 5、节流、防抖
+4、each
 9、预传参curry
-6、each方法、轮询poll、await
+6、轮询poll、await
 7、queryString、getSearchParam、encodeURIJson
 8、cookie操作
 9、判断一个元素是否在可视区
@@ -277,12 +278,48 @@
     bind: bind
   });
 
-  function throttle() {
+  // 防抖：时间间隔大于xx才会触发
+  function debounce(fn, interval) {
+    var timer = null;
+    interval = typeof interval === 'number' ? interval : 200;
 
+    return typeof fn !== 'function' ? function() {} :
+      function() {
+        var that = this;
+        var args = arguments;
+
+        clearTimeout(timer);
+        setTimeout(function() {
+          fn.apply(that, args);
+        }, interval)
+      }
   }
 
-  function debounce() {
+  // 节流：必须大于xx才会触发；超过一定时间ss必须触发
+  function throttle(fn, interval, max) {
+    var timer = null;
+    var lastTime = null;
+    interval = typeof interval === 'number' ? interval : 200;
+    max = typeof max === 'number' ? max : 500;
 
+    return typeof fn !== 'function' ? function() {} :
+      function() {
+        var that = this,
+          args = arguments,
+          nowTime = +new Date();
+        lastTime = lastTime || nowTime;
+
+        clearTimeout(timer);
+        if (nowTime - lastTime >= max) {
+          lastTime = null;
+          fn.apply(that, args);
+        } else {
+          setTimeout(function() {
+            lastTime = null;
+            fn.apply(that, args);
+          }, interval);
+        }
+      }
   }
 
   // 创建一个类型
@@ -335,7 +372,7 @@
   });
 
   var CustomEvent = createClass({
-    _init: function () {
+    _init: function() {
       this.___cache = {};
     },
     on: function(type, handler) {
@@ -363,12 +400,139 @@
     }
   }
 
+  // 注意转码问题
+  function queryString(str, key, separator, connector) {
+    separator = separator || '&';
+    connector = connector || '=';
+    if (!str || !key || typeof str !== 'string' || typeof key !== 'string') return null;
+    var re = new RegExp('(?:^|' + separator + ')' + encodeURIComponent(key) + connector + '([^' + separator + connector + ']*)');
+    var match = str.match(re);
+    return match ? decodeURIComponent(match[1]) : null
+  }
+
+  function queryUrl(key) {
+    // 切掉？号
+    return queryString(window.location.search.slice(1), key)
+  }
+
+  // todo: 数组和对象
+  function jsonToStr(obj, separator, connector) {
+    separator = separator || "&";
+    connector = connector || "=";
+    var ret = [];
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        ret.push(encodeURIComponent(key) + connector + encodeURIComponent(obj[key]));
+      }
+    }
+    return ret.join(separator)
+  }
+
+  // todo: 考虑数组和对象
+  function strToJson(str, separator, connector) {
+    separator = separator || "&";
+    connector = connector || "=";
+    var result = str.split(separator);
+    var ret = {};
+    each(result, function(item, index) {
+      var key, value;
+      key = item.split(connector)[0];
+      value = item.split(connector)[1];
+      ret[key] = value;
+    });
+    return ret;
+  }
+
+  // cookie操作
+  var Cookie = {
+    json: function() {
+      return strToJson(document.cookie, '; ', '=')
+    },
+    get: function(key) {
+      return queryString(document.cookie, key, '; ', '=')
+    },
+    set: function(key, value, options) {
+      options = options || {};
+      if (!value) options.expires - 1;
+
+      var expires = options.expires,
+        _expires;
+      if (typeof expires == 'number') {
+        _expires = new Date(+new Date() + expires);
+      } else if (expires instanceof Date) {
+
+      } else if (typeof expires === 'string') {
+        var timeType = value.slice(value.length - 1).toLowerCase();
+        var num = Number(value.slice(0, -1));
+        switch (expires) {
+          case 'y':
+            _expires = num * 365 * 24 * 60 * 60 * 1000;
+            break;
+          case 'm':
+            _expires = num * 30 * 24 * 60 * 60 * 1000;
+            break;
+          case 'd':
+            _expires = num * 24 * 60 * 60 * 1000;
+          case 'h':
+            _expires = num * 60 * 60 * 1000;
+            break;
+          case 'minute':
+            _expires = num * 60 * 1000;
+            break;
+          case 's':
+          default:
+            _expires = num * 1000;
+            break;
+        }
+
+        _expires = new Date(+new Date() + _expires);
+      }
+
+      document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';' +
+        (options.domain ? 'domain=' + options.domain + ';' : '') +
+        (options.path ? 'path=' + options.path + ';' : '') +
+        (_expires ? 'expires=' + _expires.toGMTString() + ';' : '') +
+        (options.secure ? 'secure;' : '')
+    },
+    remove: function(key) {
+      Cookie.set(key, '', {
+        expires: -1 // 数字 或者 时间对象
+      })
+    }
+  }
+
+  // 轮询condition
+  // success: 再max次内，并且condition返回true
+  // error: condition返回false，condition执行有错误，超时
+  function poll(condition, interval, max, success, error) {
+    var times = 0;
+
+    function execute() {
+      if (condition() === true) {
+        success();
+      } else if (condition() === false) { 
+        error('error');
+      } else {
+        setTimeout(function() {
+          times++;
+          if (times > max) {
+            error('timeout');
+          } else {
+            execute();
+          }
+        }, interval);
+      }
+    }
+
+    execute();
+  }
+
   // 获取对于视窗的位置集合
   // ie5以上都能支持，但是又一点点地方需要修正一下，
   // IE67的left、top会少2px,并且没有width、height属性。
   function getOffset(elem) {
     var offset = elem.getBoundingClientRect();
-
+    return offset;
   }
 
   function top(elem, threshold) {
@@ -376,19 +540,19 @@
     var offset = getOffset(elem);
     var windowHeight = window.innerHeight;
     var scrollTop = document.scrollTop || document.body.scrollTop || 0;
-    return offset.top + (threshold.top || 0) < scrollTop + windowHeight ;
+    return offset.top + (threshold.top || 0) < scrollTop + windowHeight;
   }
 
   function bottom(elem, threshold) {
     threshold = threshold || {};
     var offset = getOffset(elem);
     var scrollTop = document.scrollTop || document.body.scrollTop || 0;
-    return offset.top + offset.height + (threshold.bottom || 0) > scrollTop 
+    return offset.top + offset.height + (threshold.bottom || 0) > scrollTop
   }
 
-
-
-
+  function inView(elem, threshold) {
+    return top(elem, threshold) && bottom(elem, threshold)
+  }
 
   return util;
 });
