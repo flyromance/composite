@@ -749,11 +749,20 @@
     connector = connector || "=";
     var ret = [];
     for (var key in obj) {
+      if (obj[key] == null) continue;
       if (obj.hasOwnProperty(key)) {
-        ret.push(encodeURIComponent(key) + connector + encodeURIComponent(obj[key]));
+          if (obj[key] instanceof Array) {
+            ret.push(encodeURIComponent(key) + '[]' + connector + encodeURIComponent(obj[key]));
+          } else {
+            ret.push(encodeURIComponent(key) + connector + encodeURIComponent(obj[key]));
+          }
       }
     }
     return ret.join(separator)
+  }
+
+  function encodeURIJson(json) {
+    return jsonToStr(json, '&', '=')
   }
 
   // todo: 考虑数组和对象
