@@ -113,7 +113,7 @@ function express() {
     var server = http.createServer(app);
 
     app.listen = function (port, cb) {
-        port = port || 5566;console.log(port);
+        port = port || 5566;
         server.listen(port, function () {
             cb.call();
         });
