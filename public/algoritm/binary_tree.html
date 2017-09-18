@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+  // 二叉树生产
+  function Node(value) {
+    this.left = null;
+    this.right = null;
+    this.value = value;
+  }
+
+  function BinaryTree(value) {
+    this.root = new Node(value);
+  }
+
+  function insert(node, newNode) {
+    if (newNode.value > node.value) {
+      if (!node.right) {
+        node.right = newNode;
+      } else {
+        insert(node.right, newNode);
+      }
+    } else {
+      if (!node.left) {
+        node.left = newNode;
+      } else {
+        insert(node.left, newNode);
+      }
+    }
+  }
+
+  BinaryTree.prototype.insert = function(value) {
+    var node = new Node(value);
+    insert(this.root, node);
+    return this;
+  }
+
+  function middleTraverse(node, handler) {
+    if (node) {
+      middleTraverse(node.left, handler);
+      handler && handler(node.value);
+      middleTraverse(node.right, handler);
+    }
+  }
+
+  BinaryTree.prototype.middleTraverse = function(handler) {
+    console.log('middle order start...');
+    middleTraverse(this.root, handler);
+    console.log('middle order end...');
+  }
+
+  function frontTraverse(node, handler) {
+    if (node) {
+      handler && handler(node.value);
+      frontTraverse(node.left, handler);
+      frontTraverse(node.right, handler);
+    }
+  }
+
+  BinaryTree.prototype.frontTraverse = function(handler) {
+    console.log('front order start...');
+    frontTraverse(this.root, handler);
+    console.log('front order start...');
+  }
+
+  function backTraverse(node, handler) {
+    if (node) {
+      backTraverse(node.left, handler);
+      backTraverse(node.right, handler)
+      handler && handler(node.value);
+    }
+  }
+
+  BinaryTree.prototype.backTraverse = function(handler) {
+    console.log('back order start...');
+    backTraverse(this.root, handler);
+    console.log('back order end...');
+  }
+
+  function min(node, handler) {
+    if (node) {
+      if (node.left) {
+        min(node.left, handler)
+      } else {
+        handler(node.value)
+      }
+    }
+  }
+
+  BinaryTree.prototype.min = function(handler) {
+    min(this.root, handler);
+  }
+
+  function max(node, handler) {
+    if (node) {
+      if (node.right) {
+        max(node.right, handler)
+      } else {
+        handler(node.value)
+      }
+    }
+  }
+
+  BinaryTree.prototype.max = function(handler) {
+  	max(this.root, handler)
+  }
+
+  function find(node, value, handler) {
+  	if (node) {
+  		if (value == node.value) {
+  			handler(true)
+  		} else if (value > node.value) {
+  			find(node.right, value, handler)
+  		} else {
+  			find(node.left, value, handler)
+  		}
+  	} else {
+  		handler(false)
+  	}
+  }
+
+  BinaryTree.prototype.find = function(value, handler) {
+  	find(this.root, value, handler)
+  }
+
+  var binaryTree = new BinaryTree(8);
+
+  binaryTree.insert(2);
+  binaryTree.insert(10);
+  binaryTree.insert(12);
+  binaryTree.insert(5);
+  binaryTree.insert(1);
+
+  console.log(binaryTree);
+
+  // 中序遍历：升序排列
+  binaryTree.middleTraverse(function(value) {
+    console.log(value);
+  })
+
+  // 前序遍历：复制
+  // 比重新构造二叉树效率高10倍
+  binaryTree.frontTraverse(function(value) {
+    console.log(value);
+  });
+
+  // 后序遍历：
+  binaryTree.backTraverse(function(value) {
+    console.log(value)
+  });
+
+  // 找最小值
+  binaryTree.min(function(value) {
+    console.log('min: ', value);
+  });
+
+  // 找最大值
+  binaryTree.max(function(val) {
+    console.log('max: ', val)
+  });
+
+  // 是否存在
+  binaryTree.find(11, function(isExist) {
+    console.log('11 is exist ? ', isExist)
+  });
+  </script>
+</body>
+
+</html>
