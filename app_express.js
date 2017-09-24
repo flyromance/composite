@@ -37,6 +37,10 @@ app.use('/history', function (req, res) {
     res.render('history');
 });
 
+app.use('/async_module', function(req, res) {
+    res.render('async_module')
+})
+
 
 app.use(function (req, res) {
     console.log('middleware route...');
