@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script type="text/javascript" src="/my/async_module.js"></script>
+
+	<script type="text/javascript">
+		F.config({
+			baseUrl: '/my'
+		});
+		F.use(['lib/a', 'lib/b'], function (a, b) {
+			console.log(a, b.name);
+		})
+	</script>
+</body>
+</html>
