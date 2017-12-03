@@ -6,49 +6,26 @@ var querystring = require('querystring');
 var util = require('util');
 var ejs = require('ejs')
 
-function wrapReq(req) {
-    var parsedUrl = url.parse(req.url, true); // 传了true，就不用querystring.parse在转了
-    req.query = parsedUrl.query;
+
+var settings = {
+    baseDir: process.cwd(),
+    viewDir: path.resolve(process.cwd(), 'views'),
+    engine: {
+        extname: '.ejs'
+    },
 }
 
-function wrapRes(res) {
-    res.send = function (val) {
-        if (util.isString(val)) {
-            res.end(val);
-        }
-
-        if (util.isNumber(val)) {
-            res.writeHead(val, arguments[1]);
-            res.end();
-        }
-
-        if (util.isObject(val)) {
-            res.end(JSON.stringify(val));
-        }
-    };
-
-    res.json = function (obj) {
-        if (util.isObject(val)) {
-            res.end(JSON.stringify(val));
-        }
-    };
-}
+var middlewares = [];
 
 function express() {
-
-    var list = [];
 
     function app(req, res) {
         var i = 0;
 
-        wrapReq(req);
-        wrapRes(res);
-        console.log(list);
-
         function next() {
-            var item = list[i++];
+            var item = middlewares[i++];
 
-            if (!item) return;
+            if (!item) res.end('no match');
 
             if (item.route === null ||
                 item.route == url.parse(req.url, true).pathname) {
@@ -63,56 +40,61 @@ function express() {
 
     app.use = function (name, handler) {
         if (typeof name == 'function') {
-            list.push({
+            middlewares.push({
                 route: null,
                 handler: name
             });
         } else {
-            list.push({
+            middlewares.push({
                 route: name,
                 handler: handler
             });
         }
     };
 
-    var defaultExtname = 'ejs';
-    var engines = {};
     app.set = function (type, val) {
+        settings[type] = val;
+
         if (type == 'views') {
-            var viewPath = path.resolve(process.cwd(), val);
-
-            app.use(function (req, res, next) {
-                res.render = function (name, data) {
-                    var filePath = path.join(viewPath, name); 
-                    var extname = path.extname(filePath).slice(1);
-                    if (!extname) extname = defaultExtname;
-                    filePath += '.' + extname;
-                    engine = engines[extname] || ejs.__express;console.log(filePath);
-                    engine(filePath, function (data) {
-                        res.writeHead(200, 'ok', {
-                            'Content-Type': 'text/html'
-                        });
-                        res.write(data);
-                        res.end();
-                    });
-                };
-
-                next();
-            });
+            settings.viewDir = path.isAbsolute(val) ? val : path.resolve(process.cwd(), val);
         } else if (type == 'view engine') {
-            defaultExtname = val || defaultExtname;
+            typeof val === 'string' && (settings.engine.extname = val.charAt(0) === '.' ? val : '.' + val);
         }
     };
 
     app.engine = function (type, handler) {
         if (typeof type === 'string' && typeof handler === 'function') {
-            !engines[type] && (engines[type] = handler);
+            settings.engine[type] = handler;
         }
     };
 
-    var server = http.createServer(app);
+    // 渲染引擎
+    app.use(function (req, res, next) {
+        res.render = function (pagename, data) {
+            var filepath = path.resolve(settings.viewDir, pagename);
+            var extname = path.extname(pagename).slice(1);
+            if (!extname) {
+                extname = settings.engine.extname;
+                filepath += extname;
+            }
+            
+            engine = settings.engine[extname.slice(1)];
+            engine(filepath, function (data) {
+                res.writeHead(200, 'ok', {
+                    'Content-Type': 'text/html'
+                });
+                res.write(data);
+                res.end();
+            });
+        };
+
+        next();
+    });
+
+    var server = null;
 
     app.listen = function (port, cb) {
+        server = http.createServer(app);
         port = port || 5566;
         server.listen(port, function () {
             cb.call();
@@ -131,21 +113,21 @@ var extMap = {
 }
 
 express.static = function (staticPath) {
+    staticPath = path.isAbsolute(staticPath) ? staticPath : path.resolve(settings.baseDir, staticPath);
 
     return function (req, res, next) {
         var pathObj = url.parse(req.url, true);
-        var filePath = path.resolve(staticPath, pathObj.pathname.slice(1));
-        console.log(filePath);
+        var pathname = pathObj.pathname;
 
         // {encoding: 'utf8'}
-        fs.readFile(filePath, function (err, data) {
+        fs.readFile(path.join(staticPath, pathname), function (err, data) {
             if (err) {
                 next();
             } else {
-                var extname = path.extname(filePath) || '*';
+                var extname = path.extname(pathname) || '*';
                 var fileType = extMap[extname.slice(1)];
                 res.writeHead(200, 'ok', {
-                    'Content-Type': fileType, 
+                    'Content-Type': fileType,
                     // 'Content-Length': Buffer.byteLength(data)
                 });
                 // res.statusCode = 200;

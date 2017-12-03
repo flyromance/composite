@@ -15,7 +15,6 @@ function bodyParser(req, res, next) {
     req.on('data', function (data) {
         chunk += data;
     }).on('end', function () {
-        console.log('middleware bodyParser...');
         req.body = parseBody(chunk);
         next();
     });

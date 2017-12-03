@@ -9,17 +9,29 @@
 
 	<a href="http://javascript.ruanyifeng.com/bom/history.html#toc2">ruanyifeng</a>
 
+	<div>
+		<a href="/b" id='a'>b</a>
+	</div>
 	<script type="text/javascript">
+	// document.querySelector('#a').onclick = function (e) {
+	// 	console.log(e);
+	// 	e.preventDefault();
+	// }
+
 	window.addEventListener('popstate', function(e) {
 		console.log(e);
-	})
+	});
+
+	// window['onpopstate'] = function (e) {
+	// 	console.log(e)
+	// }
 
 	// 浏览器地址栏显示: www.xxx.com
 
-	// pushState(state, title, url)
-	// state与url是一一对应的
-	// history.pushState({url: 'a'}, 'a', '/a');
+	// pushState(state, title, url);  state与url是一一对应的
 	// 浏览器地址栏显示: www.xxx.com/a
+	// history.pushState({url: 'a'}, 'a', '/a'); 
+	
 
 	// history.pushState({url: 'b'}, 'b', '/b');
 	// 浏览器地址栏显示: www.xxx.com/b

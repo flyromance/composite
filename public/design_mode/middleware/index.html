@@ -19,36 +19,86 @@
             }
             return this;
         },
-        next: function() {
-            if (this._caches && this._caches.length) {
-                this._caches.shift().apply(null, [this.data, this.next.bind(this)]);
-            }
+        stop: function () {
+            this.isStop = true;
+        }, 
+        start: function() {
+            this.isStop = false;
         },
-        execute: function(data) {
-            this._caches = this.lists.map(function(item, index) {
-                return item;
-            });
-            this.data = data;
-            this.next();
+        exec: function() {
+            var self = this;
+            if (self.firing) {
+                return;
+            }
+
+            this.firing = true;
+            this.index = 0;
+
+            function next() {
+                if (self.isStop) return;
+                var handler = self.lists[self.index++];
+                if (!handler) {
+                    self.firing = false;
+                    return;
+                }
+                handler.apply(self, [next])
+            }
+
+            next()
         }
     }
 
     var middleware1 = new Middleware();
-    middleware1.use(function(data, next) {
-        console.log(1, data.name);
-        next();
+    middleware1.use(function(next) {
+        console.log(1);
+        middleware1.exec();
+        middleware1.use(function (next) {
+            console.log(4);
+        })
+        setTimeout(() => {
+            next()
+        }, 1000);
     });
-    middleware1.use(function(data, next) {
+    middleware1.use(function(next) {
         console.log(2);
-        next();
+        setTimeout(() => {
+            next()
+        }, 1000);
     });
-    middleware1.use(function(data, next) {
+    middleware1.use(function(next) {
         console.log(3);
         next();
     });
-    middleware1.execute({
-        name: 'fanlong'
-    });
+
+    // middleware1.exec();
+
+
+    function lazyman(name) {
+        var middleware = new Middleware();
+
+        var obj = {
+            sleep: function (num) {
+                return middleware.use(function (next) {
+                    setTimeout(function () {
+                        next();
+                    }, num * 1000)
+                })
+            },
+            eat: function (obj) {
+                return middleware.use(function (next) {
+                    console.log(obj)
+                    next();
+                })
+            },
+            exec: function () {
+                middleware.exec();
+            }
+        }
+
+        return obj;
+    }
+
+    var lazyman1 = lazyman('fly').sleep(1).eat().exec()
     </script>
 </body>
 
