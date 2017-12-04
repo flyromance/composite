@@ -1,14 +1,13 @@
-(function() {
-  var moduleCache = {},
-    F = {},
-    config = {
-      baseUrl: './'
+(function () {
+  var moduleCache = {}
+    , F = {}
+    , config = {
+      baseUrl: './',
     };
 
-  function setBaseUrl() {
-  	var baseUrl = config.baseUrl;
+  Array.isArray = Array.isArray ? Array.isArray : function (arr) {
+    return Object.prototype.toString.call(arr).slice(8, -1).toLowerCase() === 'array'
   }
-
 
   function mixin(target, source) {
     for (var key in source) {
@@ -16,7 +15,7 @@
     }
   }
 
-  F.config = function(conf, value) {
+  F.config = function (conf, value) {
     if (typeof conf === 'string') {
       config[conf] = value;
     } else if (typeof conf === 'object') {
@@ -33,13 +32,17 @@
   }
 
   function getModId(id) {
-    var ret = '';
+    var ret = ''
+      , baseUrl = config.baseUrl;
 
-    var baseUrl = config.baseUrl;
-    baseUrl = baseUrl.replace(/\/$/, '') + '/'; // /my/lib/ or ./
+    if (baseUrl == '.' || baseUrl == '') {
+      baseUrl = './'
+    }
+    // /my/lib/  确保路径最后一个字符是/
+    baseUrl = baseUrl.replace(/\/$/, '') + '/';
 
     if (baseUrl == './') {
-    	config.baseUrl = baseUrl = location.pathname.replace(/\/[^\/]*$/, '') + '/';
+      config.baseUrl = baseUrl = location.pathname.replace(/\/[^\/]*$/, '') + '/';
     }
 
     id = id.replace(/\.js$/, '');
@@ -50,15 +53,15 @@
     } else if (id.indexOf('./') === 0) {
       ret = baseUrl + id.replace(/^\./, '');
     } else if (id.indexOf('../') === 0) { // ../../a.js  
-    	baseUrl = baseUrl.replace(/\/$/, ''); // /my/lib or .
-      ret = id.replace(/\.\.\//g, function() {
+      baseUrl = baseUrl.replace(/\/$/, ''); // /my/lib or .
+      ret = id.replace(/\.\.\//g, function () {
         var index = baseUrl.lastIndexOf('/');
         baseUrl = baseUrl.slice(0, index);
         return ''
       });
       ret = baseUrl + id;
     } else {
-    	ret = baseUrl + id;
+      ret = baseUrl + id;
     }
 
     return ret
@@ -79,57 +82,68 @@
 
   // 三种情况
   function loadModule(id, callback) {
-    var modId = getModId(id);
-    var mod = moduleCache[modId];
-    if (mod) {
-      if (mod.status === 'loaded') {
-        setTimeout(callback(mod.exports), 0);
-      } else if (mod.status === 'loading') {
-        mod.onload.push(callback)
-      }
-    } else {
-      mod = {
-        name: modId,
-        status: 'loading',
-        exports: null,
-        onload: [callback],
-      };
-      moduleCache[modId] = mod;
-      loadScript(formatUrl(modId));
+    var modMap = getModMap(id);
+
+    if (modMap.status === 'loaded') {
+      setTimeout(callback(modMap.exports));
+    } else if (modMap.status === 'loading') {
+      modMap.onload.push(callback)
+    } else if (modMap.status === 'init') {
+      modMap.status = 'loading';
+      modMap.onload.push(callback);
+      loadScript(formatUrl(modMap.id));
     }
   }
 
   // 设置模块完成
-  function setModule(modName, deps, factory) {
-    var modId = getModId(modName),
-    	mod = moduleCache[modId],
-      fn;
-    if (mod) {
-      mod.status = 'loaded';
-      mod.exports = factory.call(mod, deps);
-      while (fn = mod.onload.shift()) {
-        fn(mod.exports)
-      }
-    } else { // F.use() 这种模式
-      factory && factory.apply(null, deps)
+  function setModule(modName) {
+    var modMap = getModMap(modName)
+      , fn
+      , depExports = []
+      , depMod;
+
+    for (var i = 0; i < modMap.deps.length; i++) {
+      depMod = getModMap(modMap.deps[0])
+      depExports.push(depMod.exports)
+    }
+
+    modMap.status = 'loaded';
+    modMap.exports = factory.call(modMap, depExports);
+    while (fn = modMap.onload.shift()) {
+      fn(modMap.exports)
     }
   }
 
-  F.define = function(modName, deps, factory) {
-    if (modName instanceof Array) { // F.define([], function() {})
-      factory = deps;
-      deps = modName;
-      modName = null;
-    } else if (typeof modName === 'function') { // F.define(function() {})
+  function getModMap(name) {
+    var id = getModId(name)
+    var map = moduleCache[id] || {
+      status: 'init',
+      exports: {},
+      id: id,
+      onload: []
+    };
+    return moduleCache[id] = map;
+  }
+
+  // 默认是 string array function
+  F.define = function (modName, deps, factory) {
+    if (typeof modName === 'function') { // F.define(function() {})
       factory = modName;
       deps = [];
       modName = null;
     }
 
-    // F.define('xxx', function() {})
     if (typeof deps === 'function') {
-      factory = deps;
-      desp = [];
+      if (typeof modName === 'string') { // F.define('xxx', function() {})
+        factory = deps;
+        deps = [];
+      } else if (Array.isArray(modName)) { // F.define([], function() {})
+        factory = deps;
+        deps = modName;
+        modName = null;
+      } else {
+        throw new Error('arg error.')
+      }
     }
 
     if (!modName) {
@@ -137,18 +151,28 @@
       modName = getModId(modName);
     }
 
-    var lens = deps.length,
-      depsCount = lens,
-      params = [];
+    if (!Array.isArray(deps)) {
+      throw new Error('arg error, deps must be array')
+    }
+
+    if (typeof factory !== 'function') {
+      throw new Error('arg error, factory must be function')
+    }
+
+    var lens = deps.length
+      , leftCount = lens
+      , params = [];
+
+    var modMap = getModMap(modName);
+    modMap.deps = deps;
+    modMap.factory = factory;
 
     if (lens) {
       for (var i = 0; i < lens; i++) {
-        (function(i) {
-          loadModule(deps[i], function(modExports) {
-            depsCount--;
-            params[i] = modExports;
-            if (depsCount === 0) {
-              setModule(modName, params, factory);
+        (function (i) {
+          loadModule(deps[i], function () {
+            if (--leftCount === 0) {
+              setModule(modName);
             }
           });
         })(i);
@@ -159,8 +183,8 @@
   }
 
   // 主入口模块
-  F.use = function(deps, factory) {
-    F.define(+new Date() + '_mod', deps, factory);
+  F.use = function (deps, factory) {
+    F.define('mod_' + new Date().getTime(), deps, factory);
   }
 
   window.F = F;

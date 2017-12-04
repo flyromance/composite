@@ -14,7 +14,7 @@ Promise = (function () {
       }
       list.forEach(function (handler) {
         try {
-          var ret = handler.call(self, self.val)
+          var ret = handler && handler.call(self, self.val)
         } catch (e) {
           self._reject && self._reject();
           return;
@@ -61,7 +61,7 @@ Promise = (function () {
     } else if (self.status === 'resolved') {
       setTimeout(function () {
         try {
-          var ret = resolver.call(self, self.val)
+          var ret = resolver && resolver.call(self, self.val)
         } catch (e) {
           self._reject && self._reject();
           return;
@@ -79,7 +79,7 @@ Promise = (function () {
     } else {
       setTimeout(function () {
         try {
-          var ret = rejecter.call(self, self.val)
+          var ret = rejecter && rejecter.call(self, self.val)
         } catch (e) {
           self._reject && self._reject();
           return;
@@ -95,7 +95,6 @@ Promise = (function () {
         }
       })
     }
-
 
     var promise = new Promise(function (resolve, reject) {
       self._reject = function (val) {
