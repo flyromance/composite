@@ -178,7 +178,7 @@
         })(i);
       }
     } else {
-      setModule(modName, [], factory);
+      setModule(modName);
     }
   }
 
