@@ -172,6 +172,7 @@
         src = source[key];
         if (deep && ((_isArray = isArray(src)) || isPlainObject(src))) {
           if (_isArray) {
+            _isArray = false;
             clone = tar && isArray(tar) ? tar : [];
           } else {
             clone = tar && isPlainObject(tar) ? tar : {};
