@@ -113,12 +113,82 @@ Promise = (function () {
     return this.then(null, rejecter)
   }
 
-  Promise.all = function () {
+  Promise.all = function (arr) {
+    if (!Array.isArray(arr)) throw new Error('must be array');
+    var _reject, _resolve, vals = [], stop = false;
 
+    for (var i = 0, lens = arr.length, leftLens = lens; i < lens; i++) {
+      if (stop) break;
+      (function (i) {
+        var val = arr[0];
+        if (val instanceof Promise) {
+          val.then(function (val) {
+            cb(val, i)
+          }, function (val) {
+            stop = true
+            _reject(val)
+          })
+        } else {
+          cb(val, i)
+        }
+      })(i);
+    }
+
+    function cb(val, i) {
+      vals[i] = val;
+      if (--leftLens === 0) {
+        setTimeout(function () {
+          _resolve(vals)
+        });
+      }
+    }
+
+    var promise = new Promise(function (resolve, reject) {
+      _resolve = function (val) {
+        resolve(val)
+      }
+
+      _reject = function (val) {
+        reject(val)
+      }
+    })
+
+    return promise
   }
 
-  Promise.race = function () {
+  Promise.race = function (arr) {
+    if (!Array.isArray(arr)) throw new Error('must be array');
+    var _reject, _resolve, vals = [];
 
+    for (var i = 0, lens = arr.length; i < lens; i++) {
+      var val = arr[0];
+      if (val instanceof Promise) {
+        val.then(function (val) {
+          _resolve && _resolve(val);
+          _resolve = null;
+        }, function (val) {
+          _reject && _reject(val)
+          _reject = null;
+        })
+      } else {
+        setTimeout(function () {
+          _resolve(val)
+        })
+        break;
+      }
+    }
+
+    var promise = new Promise(function (resolve, reject) {
+      _resolve = function (val) {
+        resolve(val)
+      }
+
+      _reject = function (val) {
+        reject(val)
+      }
+    })
+
+    return promise
   }
 
   Promise.resolve = function () {
