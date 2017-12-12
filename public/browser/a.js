@@ -1,1 +1,1 @@
-console.log(document.readyState)
+console.log(1)

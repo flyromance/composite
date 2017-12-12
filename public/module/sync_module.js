@@ -16,8 +16,8 @@
       if (typeof parent[parts[i]] === 'undefined') {
         parent[parts[i]] = {};
         old = parent;
-        parent = parent[parts[i]]
-      }
+			}
+			// parent = parent[parts[i]]
     }
 
     if (typeof fn === 'function') {
