@@ -18,11 +18,11 @@
 			return args[0];
 		}
 
-		return function (arg) {
-			return args.slice(0, -1).reduceRight(function (composed, f) {
-				return f(composed)
-			}, args[args.length - 1](arg))
-		}
+		return args.reduce(function(a, b) {
+            return function() {
+                return a(b.apply(undefined, arguments));
+            };
+        });
 	}
 	</script>
 </body>

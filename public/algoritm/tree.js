@@ -277,3 +277,88 @@ class BinarySearchTree {
     }
 
 }
+
+
+function Node(val) {
+    this.right = null;
+    this.left = null;
+    this.val = val;
+}
+
+function BinaryTree(val) {
+    this.root = new Node(val);
+}
+
+function middleWark(node, cb) {
+    if (!node) return;
+    cb(node.val);
+    middleWark(node.left, cb);
+}
+
+BinaryTree.prototype.middleWark = function (cb) {
+    middleWark(this.root, cb)
+}
+
+function insert(node, newNode) {
+    if (newNode.val > node.val) {
+        if (node.right) {
+            insert(node.right, newNode);
+        } else {
+            node.right = node;
+        }
+    } else if (nodeNode.val < node.val) {
+        if (node.left) {
+            insert(node.left, newNode)
+        } else {
+            node.left = node;
+        }
+    }
+}
+
+BinaryTree.prototype.insert = function (val) {
+    if (val instanceof Node) {
+        insert(this.root, val)
+    } else {
+        insert(this.root, new Node(val))
+    }
+}
+
+function find(node, val) {
+    if (!node) return;
+
+    if (node.val === val) {
+        return val;
+    } else if (node.val > val) {
+        return find(node.left, val)
+    } else {
+        return find(node.right, val)
+    }
+}
+
+BinaryTree.prototype.find = function (val) {
+    return find(this.root, val)
+}
+
+function min(node, cb) {
+    if (node.right) {
+        min(node.right, cb)
+    } else {
+        cb(node.val)
+    }
+}
+
+BinaryTree.prototype.min = function (val) {
+    min(this.root, cb)
+}
+
+function max(node, cb) {
+    if (node.right) {
+        max(node.right, cb)
+    } else {
+        cb(node.val)
+    }
+}
+
+BinaryTree.prototype.max = function (cb) {
+    max(this.root, cb)
+}

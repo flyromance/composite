@@ -20,6 +20,25 @@
 
     var jsonText = '{"title":"professional javascript","authors":["fanlong"],"edition":3,"year":2011}';
     console.log(JSON.parse(jsonText) == JBook); // false
+
+    function deepClone(obj) {
+        var isArray, ret;
+        if ((type = Array.isArray(obj)) || Object.hasOwnProperty(obj.prototype, 'hasOwnProperty')) {
+            if (isArray) {
+                ret = [];
+                for (var i = 0; i < obj.length; i++) {
+                    ret.push(deepClone(arr[i]))
+                }
+            } else {
+                ret = {};
+                for (var key in obj) {
+                    ret[key] = deepClone(obj[key])
+                }
+            }
+        } else {
+            return obj;
+        }
+    }
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@ class CC {
     constructor() {
         this.name = 123
     }
-    sayName() {}
+    sayName() { }
 }
 
 class MM extends CC {
@@ -16,10 +16,9 @@ class MM extends CC {
 
     }
 
-    // 不支持
-    // say = 1 => 实例属性
+    // say = 1 => 实例属性 相当于在 constructor中添加 say = 1
     // static say = 2 => 静态属性
-    static say() {}
+    static say() { }
 }
 
 // 编译后的es5代码
@@ -54,8 +53,8 @@ function _inherits(subClass, superClass) {
         throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
     }
 
-    subClass.prototype = Object.create(superClass && superClass.prototype, { 
-        constructor: { value: subClass, enumerable: false, writable: true, configurable: true } 
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: { value: subClass, enumerable: false, writable: true, configurable: true }
     });
 
     if (superClass) {
@@ -78,10 +77,10 @@ var CC = function () {
 
     _createClass(CC, [{
         key: "sayName",
-        value: function sayName() {}
+        value: function sayName() { }
     }], [{
         key: "say",
-        value: function say() {}
+        value: function say() { }
     }]);
 
     return CC;
@@ -103,15 +102,15 @@ var MM = function (_CC) {
     }
 
     // 继承父类的静态方法和实例方法
-    _inherits(MM, _CC); 
+    _inherits(MM, _CC);
 
     // 覆盖从父类继承的静态属性和实例方法
     _createClass(MM, [{
         key: "sayAge",
-        value: function sayAge() {}
+        value: function sayAge() { }
     }, {
         key: "sayName",
-        value: function sayName() {}
+        value: function sayName() { }
     }]);
 
     return MM;

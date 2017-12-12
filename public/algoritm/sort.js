@@ -3,8 +3,32 @@
  * 参考：http://www.barretlee.com/blog/2016/08/11/algorithms-of-sort/
  */
 
-// 冒泡排序
+ // 冒泡
 function bubbleSort(arr, order) {
+    var lens = arr.length, i, j, mid;
+    for (i = 0; i < lens - 1; i++) {
+        for (j = 0; j < lens - 1 - i; j++) {
+            if (!order) { // 从小到大
+                if (arr[j] > arr[j+1]) {
+                    mid = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = mid;
+                }
+            } else {
+                if (arr[j] < arr[j+1]) {
+                    mid = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = mid;
+                }
+            }
+        }
+    }
+    return arr;
+}
+
+
+// 选择排序
+function _selectSort(arr, order) {
     var i, mid, j, item, lens = arr.length;
 
     if (typeof order === 'function') {

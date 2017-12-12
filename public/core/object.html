@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Object的所有自身属性, 都是不可枚举的</h3>
+    <ul id="list">
+
+    </ul>
+
+    <h3>Object.prototype的所有属性, 都是不可枚举的</h3>
+    <ul id="list1">
+            
+    </ul>
+
+    <script>
+    // Object.create
+
+    // Object.
+    function getKeys(obj, type) {
+
+    }
+
+    function insert(node, str) {
+        
+    }
+    var keys = Object.getOwnPropertyNames(Object);
+    var str = '';
+    for (var i = 0; i < keys.length; i++) {
+        str += `<li>${keys[i]}</li>`
+    }
+    document.querySelector('#list').innerHTML = str;
+
+    var keys_1 = Object.getOwnPropertyNames(Object.prototype);
+    var str1 = '';
+    for (var i = 0; i < keys_1.length; i++) {
+        str1 += `<li>${keys_1[i]}</li>`
+    }
+    document.querySelector('#list1').innerHTML = str1;
+
+    
+
+    </script>
+</body>
+</html>
