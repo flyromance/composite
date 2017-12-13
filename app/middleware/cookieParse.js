@@ -1,4 +1,4 @@
-function parseStr(str) {
+function parseStr(str = '') {
     var cookies = {};
     var arr = str.split('; ') ;
     arr.forEach(function (item, i) {
@@ -8,6 +8,7 @@ function parseStr(str) {
 }
 
 module.exports = function (req, res, next) {
+    // 如果没有cookie，返回的是undefined...，必须判断一下
     var cookie = req.headers.cookie;
     req.cookies = parseStr(cookie);
     next()

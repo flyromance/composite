@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <section>
+    <h2>dom事件</h2>
+    <div>
+      <dl>
+        <dt>dom事件的级别</dt>
+        <dd>
+          <ul>
+            <li>0级 dom.onclick</li>
+            <li>1级 dom1标准设计的时候，没有设计与事件相关的东西，所以直接是dom2级事件</li>
+            <li>2级 dom.addEventListener('click', function() {}, false), dom.attachEvent('onclick', function () {})</li>
+            <li>3级 添加了很多事件类型，如mouseup、keyup等等</li>
+          </ul>
+        </dd>
+        <dt>dom事件模型</dt>
+        <dd>冒泡 捕获</dd>
+        <dt>dom事件流</dt>
+        <dd>浏览器设计的一套机制：用户和网页的交互方式，比如说点击，顶层先捕获，目标阶段，冒泡到顶层</dd>
+        <dt>dom捕获的具体流程</dt>
+        <dd>
+          <ul>
+            <li>第一个接收到事件的是<strong>window</strong>对象</li>
+            <li>第二个是<strong>document</strong></li>
+            <li><strong>document.documentElement</strong></li>
+            <li><strong>document.body</strong></li>
+            <li>...</li>
+          </ul>
+        </dd>
+        <dt>event对象的常见应用</dt>
+        <dd>
+          <ul>
+            <li>event || window.event</li>
+            <li>event.preventDefault() event.returnValue = false</li>
+            <li>event.stopPropagation() event.cancelBubble = true</li>
+            <li>event.stopImmediatePropagation() </li>
+            <li>event.target event.srcElement</li>
+            <li>event.currentTarget</li>
+            <li>event.relatedTarget</li>
+          </ul>
+        </dd>
+        <dt>自定义事件</dt>
+        <dd></dd>
+      </dl>
+    </div>
+  </section>
+</body>
+</html>
