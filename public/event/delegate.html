@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul>
+    <li>this is child, <button>click me</button></li>
+    <li>this is child</li>
+    <li>this is child</li>
+    <li>this is child</li>
+    <li>this is child</li>
+  </ul>
+
+  <script>
+    function delegate(dom, type, selector, handler) {
+      dom.addEventListener(type, function (e) {
+        e = e || window.event;
+        var target = e.target || e.srcElement;
+        var elems = [].slice.call(dom.querySelectorAll(selector));
+        var parent = target;
+        var arr = [];
+        while(parent) {
+          elems.forEach(element => {
+            if (element === parent) {
+              arr.push(element)
+            }
+          });
+          parent = parent.parentNode;
+        }
+        
+        arr.forEach(item => {
+          handler.call(item, e)
+        })
+      })
+    }
+    var ul = document.querySelector('ul');
+    delegate(ul, 'click', 'button', function (e) {
+      console.log(this)
+    })
+  </script>
+</body>
+
+</html>
