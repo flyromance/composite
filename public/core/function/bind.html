@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    if (typeof Function.prototype.bind !== 'function') {
+      Function.prototype.bind = function (context) {
+        var args = [].slice.call(arguments, 1);
+        var that = this;
+
+        return function () {
+          var _args = [].slice.call(arguments);
+          that.apply(context, args.concat(_args));
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

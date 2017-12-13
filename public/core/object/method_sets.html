@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Object</title>
+</head>
+
+<body>
+  <!-- Object.getOwnPropertyNames -->
+  <section id="own-names">
+    <h2>Object.getOwnPropertyNames(Object)</h2>
+    <h4>获取自身所有属性(包括可枚举、不可枚举)</h4>
+    <div id="own-names-wrapper"></div>
+    <script>
+      (function () {
+        var keys = Object.getOwnPropertyNames(Object);
+        var str = '';
+        for (var i = 0; i < keys.length; i++) {
+          str += `<li>${keys[i]}</li>`
+        }
+        document.querySelector('#own-names-wrapper').innerHTML = str;
+      })()
+    </script>
+  </section>
+
+  <!-- Object.keys -->
+  <section id="keys">
+    <h2>Object.keys</h2>
+    <h4>获取自身可枚举属性</h4>
+    <pre>
+      <code>
+        Object.keys = Object.keys || function () {
+          var keys = [];
+          for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              keys.push(key)
+            }
+          }
+          return keys
+        }
+      </code>
+    </pre>
+  </section>
+
+  <!-- Object.create -->
+  <section>
+    <h2>Object.create</h2>
+    <pre>
+      <code>
+        Object.create = Object.create || function (ProtoProps, descriptors) {
+          function Mid() {}
+          Mid.prototype = ProtoProps
+          var ret = new Mid()
+          descriptors && Object.defineProperties(ret, descriptors)
+          return ret
+        }
+      </code>
+    </pre>
+  </section>
+
+  <!-- Object.assign -->
+  <section>
+    <h2>Object.assign</h2>
+    <h4>支持多参数，自身可枚举属性，直接替换</h4>
+    <pre>
+      <code>
+        Object.assign = Object.assign || function (target, src) {
+          var srcs = [].slice.call(arguments, 1)
+          srcs.forEach(function (src) {
+            for (var key in src) {
+              target[key] = src[key]
+            }
+          })
+          return target
+        }
+      </code>
+    </pre>
+  </section>
+
+  <!-- Object.defineProperty -->
+  <section>
+    <h2>Object.defineProperty</h2>
+    <pre>
+      <code>
+        Object.defineProperty({}, {
+          configurable: true,
+          enumerable: true,
+          value: 'xxx',
+          writable: true
+        })
+
+        // get set 必须成对出现
+        Object.defineProperty({}, {
+          configurable: true,
+          enumerable: true,
+          get: function () {
+
+          },
+          set: function () {
+
+          }
+        }) 
+      </code>
+    </pre>
+  </section>
+
+  <!-- Object.freeze -->
+  <section>
+    <h2>Object.preventExtensions/seal/freeze</h2>
+    <pre>
+      <code>
+          var obj1 = { name: 'fan1' };
+          var obj2 = { name: 'fan2' };
+          var obj3 = { name: 'fan3' };
+
+          // 不能新增
+          // 可以删除已有的属性
+          // 可以修改已有的属性
+          Object.preventExtensions(obj1);
+
+          // 不能新增
+          // 不可以删除已有的属性
+          // 可以修改已有的属性
+          Object.seal(obj2);
+
+          // 不能新增
+          // 不可以删除已有的属性
+          // 不可以修改已有的属性
+          Object.freeze(obj3);
+
+          console.log(Object.isExtensible(obj1));
+          console.log(Object.isSealed(obj2));
+          console.log(Object.isSealed(obj3));
+      </code>
+    </pre>
+    <script type="text/javascript">
+        (function () {
+          var obj1 = { name: 'fan1' };
+          var obj2 = { name: 'fan2' };
+          var obj3 = { name: 'fan3' };
+
+          // 不能新增
+          // 可以删除已有的属性
+          // 可以修改已有的属性
+          Object.preventExtensions(obj1);
+
+          // 不能新增
+          // 不可以删除已有的属性
+          // 可以修改已有的属性
+          Object.seal(obj2);
+
+          // 不能新增
+          // 不可以删除已有的属性
+          // 不可以修改已有的属性
+          Object.freeze(obj3);
+
+          console.log(Object.isExtensible(obj1));
+          console.log(Object.isSealed(obj2));
+          console.log(Object.isSealed(obj3));
+        })()
+    </script>
+  </section>
+
+  <!-- Object.getOwnPropertyDescriptor -->
+
+  <!-- Object.getOwnPropertyDescriptors -->
+
+  <!-- Object.getOwnPropertySymbols -->
+
+  <script>
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    if (typeof Array.prototype.indexOf !== 'function') {
+      Array.prototype.indexOf = function (val, index) {
+        index = typeof index === 'number' ? index : 0;
+
+        if (index < 0) {
+          index = this.length + index;
+        } else if (index >= this.length) {
+          index = this.length - 1;
+        }
+
+        for (var i = index; i < this.length; i++) {
+          if (this[i] === val) {
+            return i;
+          }
+        }
+
+        return -1;
+      };
+    }
+
+    if (typeof Array.prototype.lastIndexOf !== 'function') {
+      Array.prototype.lastIndexOf = function (val, index) {
+        index = typeof index === 'number' ? index : this.length;
+
+        if (index < 0) {
+          index = this.length + index;
+        } else if (index >= this.length) {
+          index = this.length - 1;
+        }
+
+        for (var i = index; i >= 0; i--) {
+          if (this[i] == val) {
+            return i;
+          }
+        }
+
+        return -1;
+      }
+    }
+  </script>
+</body>
+
+</html>
