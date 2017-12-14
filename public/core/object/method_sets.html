@@ -50,9 +50,10 @@
     <h2>Object.create</h2>
     <pre>
       <code>
-        Object.create = Object.create || function (ProtoProps, descriptors) {
+        // protoProps必须为null或者对象，不能是undefined
+        Object.create = Object.create || function (protoProps, descriptors) {
           function Mid() {}
-          Mid.prototype = ProtoProps
+          Mid.prototype = protoProps
           var ret = new Mid()
           descriptors && Object.defineProperties(ret, descriptors)
           return ret
@@ -85,6 +86,7 @@
     <h2>Object.defineProperty</h2>
     <pre>
       <code>
+        // value writable 必须成对出现，其中任何一个不能与get、set中任何一个一起出现
         Object.defineProperty({}, {
           configurable: true,
           enumerable: true,
@@ -97,15 +99,23 @@
           configurable: true,
           enumerable: true,
           get: function () {
-
+            return xxx
           },
-          set: function () {
-
+          set: function (new_val) {
+            return xxx
           }
         }) 
       </code>
     </pre>
   </section>
+
+
+  <!-- Object.getOwnPropertyDescriptor -->
+
+  <!-- Object.getOwnPropertyDescriptors -->
+
+  <!-- Object.getOwnPropertySymbols -->
+
 
   <!-- Object.freeze -->
   <section>
@@ -164,11 +174,10 @@
     </script>
   </section>
 
-  <!-- Object.getOwnPropertyDescriptor -->
 
-  <!-- Object.getOwnPropertyDescriptors -->
+  <!-- Object.getPrototypeOf -->
 
-  <!-- Object.getOwnPropertySymbols -->
+  <!-- Object.setPrototypeOf -->
 
   <script>
 

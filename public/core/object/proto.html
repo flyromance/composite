@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <section>
+    <h2>创建对象的3种方法</h2>
+    <pre>
+      new Object() 或者 new Factory()
+      var obj = {}
+      Object.create(null 或者 {name: '123'})
+    </pre>
+  </section>
+
+  <section>
+    <h2>原型链__proto__ 原型对象obj.prototype</h2>
+    <pre>
+      <code>
+        // 浏览器自动给obj添加了__proto__属性，并且指向Object.prototype原型对象
+        var obj = {};
+        
+        // 在es5标准化之前，通过__proto__暴露原型对象
+        obj.__proto__; // 返回Object.prototype对象
+        obj.hasOwnProperty("__proto__"); // false 不是自身的属性！
+        obj.propertyIsEnumerable("__proto__"); // false 也是不可枚举的！
+
+        // es5标准化之后，通过Object.getPrototypeOf(obj)也能获得原型对象
+        Object.getPrototypeOf(obj); // 返回obj.__proto__
+      </code>
+    </pre>
+  </section>
+
+  <section>
+    <h2>Function</h2>
+    <pre>
+      // 模拟Function构造函数的原理，创建函数自动给函数加上一个prototype属性，并且指向{constructor: this}
+      function Function() {
+        Object.defineProperty(this, 'prototype', {
+          configurable: false,
+          enumerable: false,
+          writable: false, // 自己定义的构造函数，这里是true，比如 new DD(), 但是new Object()这里是false，这是区别
+          value: {
+            constructor: this,
+          }
+        })
+      }
+
+      // 通过Function构造Object
+      var Object = new Function();
+      // 在给其prototype添加属性
+      Object.defineProperties(Object.prototype, {
+        hasOwnProperty: {
+          configurable: true,
+          enumerable: false, // 与自己写的Factory.prototype = {xx: xxx}, 区别就在于是否可以枚举
+          writable: true,
+          value: xx,
+        },
+        isPrototypeOf: {
+          configurable: true,
+          writable: true,
+          value: xx,
+        },
+        propertyIsEnumerable: {
+          configurable: true,
+          writable: true,
+          value: xx,
+        }
+      })
+
+      // 声明普通的构造函数
+      function Factory() {}
+      var obj = new Factory()
+    </pre>
+  </section>
+
+  <section>
+    <h2>instancof 原理</h2>
+    <pre>
+      <code>
+        instance.__proto__ 与 constructor.prototype 是否引用同一个对象
+        var obj = new DD();
+        obj instancof DD; // true, obj.__proto__ === DD.prototype
+        obj instancof Object; // true, obj.__proto__.__proto__ === Object.prototype
+      </code>
+    </pre>
+  </section>
+
+  <section>
+    <h2>new Factory() 原理</h2>
+    <pre>
+      <code>
+        1、创建一个空对象{}，作为函数上下文
+        2、执行Factory函数
+        3、如果没有显示return，直接返回{}; 如果有显示return，如果return的不是对象类型，返回{}，如果return的是对象类型，返回这个对象，而不是{}
+
+        // 具体实现
+        var new_polyfill = function (func) {
+          var instance = Object.create(func.prototype)
+          var ret = func.call(instance)
+          if (typeof ret === 'Object') {
+            return ret;
+          } else {
+            return instance;
+          }
+        }
+      </code>
+    </pre>
+  </section>
+
+  <script>
+    function Person(name, age) {
+      this.name = name;
+      this.age = age;
+      this.sayName = function () {
+        console.log(this.name);
+      }
+    }
+    Person.prototype = {
+      name: 'flyromance',
+      hello: 'hello',
+    }
+    Person.prototype.constructor = Person;
+    var person1 = new Person('fanlog', 28);
+
+        // person1.name = undefined;
+        // console.log(person1.name); // undefined
+        // delete person1.name;
+        // console.log(person1.name); // flyromance
+        // console.log(person1.constructor === Person); // true
+        // console.log(Person.constructor === Function); // true
+        // console.log(Function.constructor === Function); // true
+        // console.log(Person instanceof Object); //true
+        // console.log(Person instanceof Function); // true
+        // console.log(Function instanceof Object); // ture
+  </script>
+</body>
+
+</html>

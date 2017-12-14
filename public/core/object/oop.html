@@ -1,72 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
 </head>
+
 <body>
-<script type="text/javascript">
-    function Person(name, age){
-        this.name = name;
-        this.age = age;
-        this.sayName = function(){
-            console.log(this.name);
+  <section>
+    <h2>构造函数继承</h2>
+    <pre>
+      <code>
+        function Animal() {
+
         }
-    }
-    Person.prototype = {
-        name:'flyromance',
-        hello:'hello',
-    }
-    Person.constructor = Person;
-    var person1 = new Person('fanlog',28);
-//    person1.name = undefined;
-//    delete person1.name;
-//    console.log(person1.name);
-//    console.log(person1.constructor == Person); // true
-//    console.log(Person.constructor == Function); // true
-//    console.log(Function.constructor);// Function
-//    console.log(Person instanceof Object); //true
-//    console.log(Person instanceof Function); // true
-//    console.log(Function instanceof Object); // ture
 
-    for(var i in person1){
-        console.log(person1[i]);
-    }
-    console.log(Object.keys(person1));
+        // 借助构造函数
+        function Parent1(name) {
+          this.name = name
+        }
 
-    var obj1 = {
-        name:'fanlong'
-    }
-    var obj2 = obj1;
-    obj1.name = 'fandisaier';
-//    obj1 = {name:'flyromance'};
-    console.log(obj2.name);
+        function Child1(name, age) {
+          Parent1.call(this, name)
+          this.age = age
+        }
+      </code>
+    </pre>
+  </section>
 
-    var arr = [123,123];
-    arr.name = 'fanlong';
-    Object.defineProperty(arr,'lenght',{
-        enumerable: true,
-        value: 2
-    });
-    for(var ii in arr){
-        console.log(arr[ii]);
-    }
+  <section>
+    <h2>原型链继承</h2>
+    <code>
+      <pre>
+        // 借助原型链
+        function Parent(name) {
+          this.name = name
+        }
 
-    for(var iii in Object){
-        console.log(Object[iii]);
-    }
-    console.log(person1.__proto__);
-    console.log(person1.__proto__.__proto__);
-    console.log(person1.propertyIsEnumerable('name'));
+        Parent.prototype = {
+          constructor: Parent,
+          sayName: function () {
+            console.log(this.name)
+          }
+        }
 
-    function create(obj){
-        function fn(){};
-        fn.prototype = obj;
-        return new fn();
-    }
+        function Child(age) {
+          Parent.call(this)
+          this.age = age
+        }
 
-    var obj3 = create(obj1);
-    console.log(obj3.__proto__ == obj1);
-</script>
+        // 这里有问题：1、修改任何一个原型都会影响彼此
+        Child.prototype = Parent.prototype;
+        Child.prototype.constructor = Child;
+        Child.prototype.sayAge = function () {
+          console.log(this.age)
+        }
+
+        // 这里也有问题：1、父类的实例属性也被继承了(name) 2、也就是子类共享同一个属性，如果这个属性指向一个数组，任何一个子类实例都能修改它。。
+        Child.prototype = new Parent();
+        Child.prototype.constuctor = Child;
+        Child.prototype.sayAge = function () {
+          console.log(this.age)
+        }
+
+        // 这里就没有问题了：创建了一个空对象，但是这个空对象的__proto__指向父类的prototype属性
+        Child.prototype = Object.create(Parent.prototype);
+        Child.prototype.constructor = Child;
+        Child.prototype.sayAge = function () {
+          console.log(this.age)
+        }
+      </pre>
+    </code>
+  </section>
+
+  <section>
+    <h4>组合式继承</h4>
+    <pre>
+      <code>
+        function Parent() {
+          this.name = 'parent';
+        }
+
+        Parent.prototype.sayName = function () {
+          console.log(this.name)
+        }
+
+        function Child() {
+          Parent.call(this)
+          this.age = age;
+        }
+
+        Child.prototype = Object.create(Parent.prototype);
+        Child.prototype.constructor = Child;
+        Child.prototype.sayAge = function () {
+          console.log(this.age)
+        }
+      </code>
+    </pre>
+  </section>
 </body>
+
 </html>
