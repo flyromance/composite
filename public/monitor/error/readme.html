@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <section>
+    <h2>错误分类，捕获方式</h2>
+    <ul>
+      <li>即时运行错误
+        <ul>
+          <li>try {xxx} catch(e) {xx}</li>
+          <li>window.onerror  window.addEventListener('error') <br>
+            window.onerror 只能捕获即时运行错误
+          </li>
+        </ul>
+      </li>
+      <li>资源加载错误
+        <ul>
+          <li>obj.onerror 冒泡形式
+            <ul>
+              <li>new Image().onerror</li>
+              <li>script.onerro</li>
+              <li>资源加载错误，不会冒泡，所有不能用window.onerro去捕获异常了</li>
+            </ul>
+          </li>
+          <li>perfomance.getEntries()
+            <ul>
+              <li>返回一个数组，数组里面每个item为资源的描述对象，item.name就是资源的url</li>
+            </ul>
+          </li>
+          <li>onerror 捕获形式
+            <ul>
+              <li></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>上报错误</h2>
+    <ul>
+      <li>ajax</li>
+      <li>image.src 上报</li>
+    </ul>
+    <pre>
+      <code>
+        function log(url) {
+          var image = new Image();
+          image.onerror = image.onload = function () {
+            // 删掉
+          }
+
+          image.src = url;
+        }
+      </code>
+    </pre>
+  </section>
+</body>
+
+</html>
