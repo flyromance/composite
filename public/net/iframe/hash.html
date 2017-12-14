@@ -27,6 +27,7 @@
 
       iframe.onload = function () {
         var data = iframe.contentWindow.location.hash.slice(1); // 获取数据，此数据通过hash值传递
+        // var data = iframe.contentWindow.location.search.slice(1); // 获取数据，此数据通过url中的search值传递
         cb.call(null, data)
       }
 

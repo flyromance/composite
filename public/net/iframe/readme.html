@@ -85,12 +85,15 @@
             </li>
             <li>location.hash
                 <ul>
-                    <li></li>
+                    <li>关键点在于如何使父级与子级iframe能够通信</li>
+                    <li>在子级iframe中利用 location.href = '执行父级同源的一个proxy页面地址' + '#data'</li>
+                    <li>此时，同源了，父级页面就能调用子级页面的js对象了</li>
                 </ul>
             </li>
             <li>postMessage
                 <ul>
                     <li>浏览器为了解决跨域提出的一套标准，ie8+都支持</li>
+                    <li>虽然同源，但是可以彼此调用postMessage这个接口，浏览器不会报同源错误！！！</li>
                     <li>推荐用这个</li>
                 </ul>
             </li>
