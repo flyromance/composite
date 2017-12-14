@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <section>
+    <h2>hash</h2>
+    <pre>
+      <code>
+        // 利用hash改变，不刷新页面的特征
+        // 场景如下：a页面中通过iframe嵌入一个b页面，b页面中绑定hashchange事件，
+        // a页面中修改iframe的src的hash值，此时b页面能收到hash
+      </code>
+    </pre>
+  </section>
+
+  <iframe id="iframe" src="b.html" frameborder="0"></iframe>
+  <script>
+    var iframe = document.querySelector('iframe')
+    iframe.src = iframe.src + '#ddd';
+  </script>
+</body>
+
+</html>

@@ -64,11 +64,8 @@
                         return Promise.resolve(response);
                     }
                 });
-
                 if (timeoutId) clearTimeout(timeoutId);
-
                 removeScript(scriptId);
-
                 clearFunction(callbackFunction);
             };
 
@@ -85,7 +82,6 @@
 
             timeoutId = setTimeout(function() {
                 reject(new Error('JSONP request to ' + _url + ' timed out'));
-
                 clearFunction(callbackFunction);
                 removeScript(scriptId);
             }, timeout);
@@ -93,30 +89,12 @@
             // Caught if got 404/500
             jsonpScript.onerror = function() {
                 reject(new Error('JSONP request to ' + _url + ' failed'));
-
                 clearFunction(callbackFunction);
                 removeScript(scriptId);
                 if (timeoutId) clearTimeout(timeoutId);
             };
         });
     }
-
-    // export as global function
-    /*
-    let local;
-    if (typeof global !== 'undefined') {
-      local = global;
-    } else if (typeof self !== 'undefined') {
-      local = self;
-    } else {
-      try {
-        local = Function('return this')();
-      } catch (e) {
-        throw new Error('polyfill failed because global object is unavailable in this environment');
-      }
-    }
-    local.fetchJsonp = fetchJsonp;
-    */
 
     module.exports = fetchJsonp;
 });

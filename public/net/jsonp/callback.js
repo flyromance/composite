@@ -5,6 +5,10 @@ var jsonp = (function () {
 
     var monitorData = {};
 
+    function mix() {
+
+    }
+
     var jsonpRet = function (url, data, callback, opt) {
         if (typeof data !== 'object') {
             opt = callback, callback = data, data = null;
@@ -59,7 +63,6 @@ var jsonp = (function () {
         //将函数存放到调用队列里
         //这个是为了支持同时用相同的url参数调用多次接口
         //这里不做返回次序的验证，因此可能服务器返回顺序会交错，但是一般情况下应该没影响
-
         window[jsonp].add(function (data, err) {
             clearTimeout(t);
             if (callback) {
