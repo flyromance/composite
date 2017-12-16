@@ -193,7 +193,7 @@ http://yuilibrary.com/license/
         }
         /*jshint newcap: false */
         return new this(function (resolve) {
-        /*jshint newcap: true */
+            /*jshint newcap: true */
             resolve(value);
         });
     };
@@ -208,15 +208,15 @@ http://yuilibrary.com/license/
     */
     Promise.reject = function (reason) {
         /*jshint newcap: false */
-        var promise = new this(function () {});
-       /*jshint newcap: true */
+        var promise = new this(function () { });
+        /*jshint newcap: true */
 
-       // Do not go through resolver.reject() because an immediately rejected promise
-       // always has no callbacks which would trigger an unnecessary warning
-       promise._resolver._result = reason;
-       promise._resolver._status = 'rejected';
+        // Do not go through resolver.reject() because an immediately rejected promise
+        // always has no callbacks which would trigger an unnecessary warning
+        promise._resolver._result = reason;
+        promise._resolver._status = 'rejected';
 
-       return promise;
+        return promise;
     };
 
     /*
@@ -238,9 +238,9 @@ http://yuilibrary.com/license/
             }
 
             var remaining = values.length,
-                i         = 0,
-                length    = values.length,
-                results   = [];
+                i = 0,
+                length = values.length,
+                results = [];
 
             function oneDone(index) {
                 return function (value) {
@@ -280,7 +280,7 @@ http://yuilibrary.com/license/
                 reject(new TypeError('Promise.race expects an array of values or promises'));
                 return;
             }
-            
+
             // just go through the list and resolve and reject at the first change
             // This abuses the fact that calling resolve/reject multiple times
             // doesn't change the state of the returned promise
@@ -300,10 +300,10 @@ http://yuilibrary.com/license/
     **/
     /* istanbul ignore next */
     Promise.async = typeof setImmediate !== 'undefined' ?
-                        function (fn) {setImmediate(fn);} :
-                    typeof process !== 'undefined' && process.nextTick ?
-                        process.nextTick :
-                    function (fn) {setTimeout(fn, 0);};
+        function (fn) { setImmediate(fn); } :
+        typeof process !== 'undefined' && process.nextTick ?
+            process.nextTick :
+            function (fn) { setTimeout(fn, 0); };
 
     /**
     Represents an asynchronous operation. Provides a
@@ -498,7 +498,7 @@ http://yuilibrary.com/license/
         **/
         _addCallbacks: function (callback, errback) {
             var callbackList = this._callbacks,
-                errbackList  = this._errbacks;
+                errbackList = this._errbacks;
 
             // Because the callback and errback are represented by a Resolver, it
             // must be fulfilled or rejected to propagate through the then() chain.
