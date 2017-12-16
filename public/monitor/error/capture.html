@@ -14,6 +14,9 @@
 
 
     var script = document.createElement('script')
+    script.onerror = function () {
+      console.log('target error')
+    }
     script.src = 'www.baidu.com/test/jsss.js'
 
     document.querySelector('head').appendChild(script)

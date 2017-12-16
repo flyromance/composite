@@ -36,7 +36,8 @@
           </li>
           <li>onerror 捕获形式
             <ul>
-              <li></li>
+              <li>资源加载的错误不冒泡，所以window.onerror监听不到</li>
+              <li>但是资源加载错误可以捕获，所以window.addEventListener(function(){}, true)就可以了</li>
             </ul>
           </li>
         </ul>

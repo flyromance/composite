@@ -32,6 +32,9 @@
             }
           });
           parent = parent.parentNode;
+          if (parent == dom) {
+            break;
+          }
         }
         
         arr.forEach(item => {
