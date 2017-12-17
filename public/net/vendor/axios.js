@@ -1,4 +1,7 @@
-/* axios v0.16.2 | (c) 2017 by Matt Zabriskie */
+/*
+ * axios v0.16.2 | (c) 2017 by Matt Zabriskie 
+ * https://github.com/axios/axios
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
     if (typeof exports === 'object' && typeof module === 'object')
         module.exports = factory();
