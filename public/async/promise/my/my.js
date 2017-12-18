@@ -10,15 +10,19 @@ Promise.race
 
 (function(g, factory) {
     if (g.Promise) {
-        g._Promise = g.Promise;
+        return
+    }
+    
+    var _Promise = g.Promise;
+
+    var Promise$ = factory(g);
+
+    Promise$.noConflict = function() {
+        g.Promise = _Promise;
+        return Promise$;
     }
 
-    g.Promise = factory(g);
-
-    Promise.noConflict = function() {
-        window.Promise = _Promise;
-        return this;
-    }
+    g.Promise = Promise$;
 })(this, function(g) {
 
     const STATUS = {
