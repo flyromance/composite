@@ -16,7 +16,7 @@ Promise = (function () {
         try {
           var ret = handler && handler.call(self, self.val)
         } catch (e) {
-          self._reject && self._reject();
+          self._reject && self._reject(e);
           return;
         }
         if (ret instanceof Promise) {
@@ -32,12 +32,14 @@ Promise = (function () {
     }
 
     function resolve(val) {
+      if (self.status !== 'pending') return;
       self.status = status = 'resolved';
       self.val = val;
       setTimeout(fire);
     }
 
     function reject(val) {
+      if (self.status !== 'pending') return;      
       self.status = status = 'rejected'
       self.val = val;
       setTimeout(fire);
@@ -55,46 +57,8 @@ Promise = (function () {
   Promise.prototype.then = function (resolver, rejecter) {
     var self = this;
 
-    if (self.status === 'pending') {
-      self.resolveList.push(resolver);
-      self.rejectList.push(rejecter);
-    } else if (self.status === 'resolved') {
-      setTimeout(function () {
-        try {
-          var ret = resolver && resolver.call(self, self.val)
-        } catch (e) {
-          self._reject && self._reject();
-          return;
-        }
-        if (ret instanceof Promise) {
-          ret.then(function (val) {
-            self._resolve(val)
-          }, function (val) {
-            self._reject(val)
-          })
-        } else {
-          self._resolve(ret)
-        }
-      })
-    } else {
-      setTimeout(function () {
-        try {
-          var ret = rejecter && rejecter.call(self, self.val)
-        } catch (e) {
-          self._reject && self._reject();
-          return;
-        }
-        if (ret instanceof Promise) {
-          ret.then(function (val) {
-            self._resolve(val)
-          }, function (val) {
-            self._reject(val)
-          })
-        } else {
-          self._resolve(ret)
-        }
-      })
-    }
+    self.resolveList.push(resolver);
+    self.rejectList.push(rejecter);
 
     var promise = new Promise(function (resolve, reject) {
       self._reject = function (val) {
