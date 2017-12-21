@@ -57,9 +57,15 @@ Promise = (function () {
   Promise.prototype.then = function (resolver, rejecter) {
     var self = this;
 
-    self.resolveList.push(resolver);
-    self.rejectList.push(rejecter);
-
+    if (self.status === 'pending') {
+      self.resolveList.push(resolver)
+      self.rejectList.push(rejecter)
+    } else if (self.status === 'resolved') {
+      self.resolveList.push(resolver);
+    } else {
+      self.rejectList.push(rejecter);
+    }
+    
     var promise = new Promise(function (resolve, reject) {
       self._reject = function (val) {
         reject(val)
