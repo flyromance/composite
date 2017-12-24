@@ -9,65 +9,52 @@
 </head>
 
 <body>
+    <div>
+        <a href="http://www.alloyteam.com/2015/03/es6-generator-introduction/">alloyteam generator介绍</a>
+    </div>
+
+    <section>
+        <h2>generator介绍</h2>
+        <div>
+            <ul>
+                <li>执行generator函数返回一个Iterator迭代器</li>
+                <li></li>
+            </ul>
+        </div>
+    </section>
+
     <script>
-        function co(genFun) {
-            // 通过调用生成器函数得到一个生成器
-            var gen = genFun();
-            return function (fn) {
-                next();
-                function next(err, res) {
-                    if (err) return fn(err);
-                    // 将res传给next，作为上一个yield的返回值
-                    var ret = gen.next(res);
-                    // 如果函数还没迭代玩，就继续迭代
-                    if (!ret.done) return ret.value(next);
-                    // 返回函数最后的值
-                    fn && fn(null, res);
+        function createIterator(num) {
+            num = num || 10
+            var i = 0;
+
+            return {
+                next: function () {
+                    return {
+                        done: i >= num,
+                        value: i >= num ? num - 1 : i++,
+                    }
                 }
             }
         }
-        
-        function asyncFun1() {
-            var next;
-            setTimeout(function () {
-                next && next(null, 1)
-            }, 1000)
 
-            return function (_next) {
-                next = _next
+        var iterator = createIterator(3)
+
+        function* generateNaturalNumber() {
+            console.log('function start');
+            var i = 0;
+            // 为了便于观察log，将循环减小到5
+            while (i <= 5) {
+                console.log('yield start');
+                yield i;
+                console.log('yield end');
+                i++;
             }
+            console.log('function end');
         }
+        var result = generateNaturalNumber();
 
-        function asyncFun2(cb) {
-            var next;
-            setTimeout(function () {
-                next && next(null, 2)
-            }, 1000)
 
-            return function (_next) {
-                next = _next
-            }
-        }
-
-        function asyncFun3(cb) {
-            var next;
-            setTimeout(function () {
-                next && next(null, 3)
-            }, 1000)
-
-            return function (_next) {
-                next = _next
-            }
-        }
-
-        co(function* () {
-            var a = yield asyncFun1();
-            var b = yield asyncFun2(a);
-            var c = yield asyncFun3(b);
-            // do somethin with c
-        })(function (ret) {
-            console.log('done', ret)
-        });
 
     </script>
 </body>
