@@ -121,7 +121,7 @@ function Vue(options) {
 Vue.prototype.mount = function (el) {
     var vm = this
     vm.$el = el
-    new Watch(vm, function () {
+    new Watcher(vm, function () {
         vm.updata(vm.render())
     })
 }
@@ -162,7 +162,7 @@ function createElement(vnode) {
         vnode.elm = document.createElement(tag)
 
         for (var key in props) {
-            vnode.setAttribute(key, props[key])
+            vnode.elm.setAttribute(key, props[key])
         }
 
         if (children) {
