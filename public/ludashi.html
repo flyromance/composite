@@ -645,8 +645,10 @@
   <script src="//s3.ssl.qhres.com/!72af2cbf/md5.js"></script>
   <script src="//s4.ssl.qhres.com/static/98c707edc784aedb/monitor.js"></script>
 
-  <script src="//s1.ssl.qhres.com/!781a3623/se_monitor.js"></script>
+  <!-- <script src="//s1.ssl.qhres.com/!781a3623/se_monitor.js"></script> -->
+  <script src="se_monitor.js"></script>
   <script src="//s2.ssl.qhres.com/!8749ff53/jquery.tinyscrollbar.js"></script>
+  <!-- <script src="jquery.tinyscrollbar.js"></script> -->
   <script src="//s2.ssl.qhres.com/!f7a4405c/q.js"></script>
 
   <!--双十二广告
@@ -1227,7 +1229,7 @@
     // mini.getVideoData();
 
     se_monitor.init({
-      project: '360se_mini_baodian',
+      project: 'btime_mini_ludashi', // 360se_mini_baodian
       basePar: {
         pid: 'p_nav_rec'
       },
@@ -1261,7 +1263,7 @@
         ctype = $target.parents('[ctype]').attr('ctype');
       }
       ctype = ctype || 0;
-
+      
       se_monitor.customizeLog({
         event_name: 'click',
         para: {
@@ -1280,8 +1282,9 @@
       clearInterval(mini.timerId);
 
       var $item = $(this).find('a');
+      var isCur = !$item.hasClass('cur'); // 通过class判断是否是当前tab页，如果是就不要重复打点
       mini.pageShowDelay = setTimeout(function() {
-        mini.hoverPageAction($item, true);
+        mini.hoverPageAction($item, isCur);
       }, 300);
     });
 
@@ -1823,8 +1826,9 @@
   </script>
 
   <!-- <script src="//s3.ssl.qhres.com/!ba336069/video_flow_all_ludashi.js"></script> -->
-  <script src="ludashi.js"></script>
-  <script src="//s2.ssl.qhres.com/!f3e4d625/ludashi_dotter.js"></script>
+  <script src="video_flow_all_ludashi.js"></script>
+  <!-- <script src="//s2.ssl.qhres.com/!f3e4d625/ludashi_dotter.js"></script> -->
+  <script src="ludashi_dotter.js"></script>
 
   <!--<script src='http://s2.qhres.com/!8eec4728/monitor_baodian.js'></script>
   <script>
