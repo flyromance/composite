@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mobx test</title>
+    <script type="text/javascript" src="./mobx.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var aa = mobx.observable({ 
+            list: [],
+            label: '',
+            total: mobx.computed(function () {
+                return this.list.reduce(function (a, b) { return { num: a.num + b.num } }).num
+            }),
+        });
+
+        aa.list.push({
+            name: 123, 
+            age: 321, 
+            job: { 
+                name: 'it', 
+                ss: '333',
+            },
+            num: 123,
+        });
+
+        mobx.autorun(function() {
+            aa.list.forEach(function (item) {
+                console.log(item, item.name, item.age);
+            });
+        });
+
+        function getUuid(len, radix) {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+            const uuid = [];
+            let i;
+            radix = radix || chars.length;
+
+            if (len) {
+                // Compact form
+                for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random()*radix];
+            } else {
+                // rfc4122, version 4 form
+                let r;
+
+                // rfc4122 requires these characters
+                uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+                uuid[14] = '4';
+
+                // Fill in random data.  At i==19 set the high bits of clock sequence as
+                // per rfc4122, sec. 4.1.5
+                for (i = 0; i < 36; i++) {
+                    if (!uuid[i]) {
+                        r = 0 | Math.random() * 16;
+                        uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r];
+                    }
+                }
+            }
+
+            return uuid.join('');
+        }
+
+        var expr = {
+            type: 1,
+            opr: 'and',
+            sub_expr_list: [
+                {
+                    type: 1,
+                    opr: 'or',
+                    sub_expr_list: [
+                        {
+                            type: 1,
+                            opr: 'and',
+                            sub_expr_list: [
+                                {
+                                    type: 0,
+                                    opr: 'eq',
+                                    key: '111',
+                                    value: '男',
+                                    desc: '平台.基础属性.性别=男',
+                                },
+                                {
+                                    type: 0,
+                                    opr: 'gt',
+                                    key: '222',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.年龄>35~40',
+                                },
+                            ],
+                        },
+                        {
+                            type: 1,
+                            opr: 'or',
+                            sub_expr_list: [
+                                {
+                                    type: 0,
+                                    opr: 'gt',
+                                    key: '222',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.年龄>35~40',
+                                },
+                                {
+                                    type: 0,
+                                    opr: 'eq',
+                                    key: '333',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.收入=35~40',
+                                },
+                            ],
+                        }
+                    ],
+                },
+                {
+                    type: 1,
+                    opr: 'and',
+                    sub_expr_list: [
+                        {
+                            type: 1,
+                            opr: 'or',
+                            sub_expr_list: [
+                                {
+                                    type: 0,
+                                    opr: 'gt',
+                                    key: '222',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.年龄>35~40',
+                                },
+                                {
+                                    type: 0,
+                                    opr: 'eq',
+                                    key: '333',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.收入=35~40',
+                                },
+                            ],
+                        },
+                        {
+                            type: 1,
+                            opr: 'eq',
+                            sub_expr_list: [
+                                {
+                                    type: 0,
+                                    opr: 'eq',
+                                    key: '444',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.年龄=35~40',
+                                },
+                            ],
+                        },
+                    ],
+                }
+            ],
+        };
+
+        var expr1 = {
+            type: 1,
+            opr: 'and',
+            sub_expr_list: [
+                {
+                    type: 1,
+                    opr: 'or',
+                    sub_expr_list: [
+                        {
+                            type: 0,
+                            opr: 'eq',
+                            key: '111',
+                            value: '35~40',
+                            desc: '平台.基础属性.年龄>35~40',
+                        },
+                        {
+                            type: 0,
+                            opr: 'gt',
+                            key: '222',
+                            value: '35~40',
+                            desc: '平台.基础属性.年龄>35~40',
+                        },
+                    ],
+                },
+                {
+                    type: 1,
+                    opr: 'and',
+                    sub_expr_list: [
+                        {
+                            type: 1,
+                            opr: 'and',
+                            sub_expr_list: [
+                                {
+                                    type: 0,
+                                    opr: 'gt',
+                                    key: '222',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.年龄>35~40',
+                                },
+                                {
+                                    type: 0,
+                                    opr: 'gt',
+                                    key: '333',
+                                    value: '35~40',
+                                    desc: '平台.基础属性.年龄>35~40',
+                                },
+                            ],
+                        },
+                        {
+                            type: 0,
+                            opr: 'eq',
+                            key: '444',
+                            value: '35~40',
+                            desc: '平台.基础属性.年龄>35~40',
+                        },
+                    ],
+                }
+            ],
+        };
+
+        var id_ = 0;
+
+        function transformExpr(data) {
+            if (Array.isArray(data)) {
+                for (let i = 0; i < data.length; i++) {
+                    if (typeof data.uuid === 'undefined') {
+                        data[i].checked = true;
+                        data[i].uuid = getUuid(10, 10);
+                    }
+                }
+            } else {
+                if (typeof data.uuid === 'undefined') {
+                    data.checked = true;
+                    data.uuid = getUuid(10, 10);
+                }
+            }
+            return data;
+        }
+
+        function transformExprTree(data, exprList = [], crossExprList = []) {
+
+            // 0条件表达式
+            if (data.type === 0) {
+                exprList.push(transformExpr(data));
+            } else { // 1关系表达式
+                crossExprList.push(transformExpr(data));
+                const list = data.sub_expr_list;
+                const isRelation = list.some((item) => { return item.type !== 0; });
+                if (isRelation) {
+                    crossExprList.push(transformExpr(list));
+                }
+
+                for (let i = 0; i < list.length; i++) {
+                    transformExprTree(list[i], exprList, crossExprList);
+                }
+            }
+            return {
+                exprList,
+                crossExprList,
+            };
+        }
+
+        var _map = {};
+        var map = {};
+
+        function transformItem(obj) {
+            var str = JSON.stringify(obj);
+            if (!_map[str]) {
+                map[getUuid(10, 10)] = JSON.parse(str);
+                _map[str] = 1;
+            }
+        }
+
+        function transformTree(data) {
+            transformItem(data);
+            let list = data.sub_expr_list;
+            if (list && list.length) {
+                for (let i = 0; i < list.length; i++) {
+                    transformTree(list[i]);
+                }
+            }
+        }
+        transformTree(expr);
+        console.log(map);
+
+        function getDeepNum(obj, index = 0, arr = []) {
+            if (obj.sub_expr_list) {
+                
+                arr.push(index++);
+                for (let i = 0; i < obj.sub_expr_list.length; i++) {
+                    getDeepNum(obj.sub_expr_list[i], index, arr);
+                }
+            } else {
+                arr.push(index);
+            }
+            return arr.sort(function(a, b) { return b - a; })[0]; // 取最大值
+        }
+
+        function transformCross(data, crossList = []) {
+            const deepNum = getDeepNum(data);
+            crossList[deepNum] = crossList[deepNum] || [];
+            crossList[deepNum].push(data);
+            if (data.sub_expr_list) {
+                const list = data.sub_expr_list;
+                const lens = list.length;
+                for (let i = 0; i < lens; i++) {
+                    transformCross(list[i], crossList);
+                }
+            }
+            
+            return crossList;
+        }
+
+        // var repeatArr = transformCross(expr);
+
+        function toList(data, index = 0, crossList = [], passed) {
+            if (data.type === 1 || passed) {
+                crossList[index] = crossList[index] || [];
+                crossList[index].push(data);
+            }
+            if (data.sub_expr_list) {
+                let list = data.sub_expr_list;
+                let lens = list.length;
+                let isRelation = data.sub_expr_list.some((item) => { return item.type !== 0; });
+                for (let i = 0; i < lens; i++) {
+                    toList(list[i], index + 1, crossList, isRelation);
+                }
+            }
+
+            return crossList;
+        }
+
+        // toList(expr);
+
+        
+    </script>
+</body>
+</html>
