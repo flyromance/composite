@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script type="text/javascript" src='./validatorjs.js'></script>
+    <script type="text/javascript">
+        let data = {
+          name: 'https://www.baidu.com',
+          email: 'fanlong@gmail.com',
+          age: '28',
+        };
+
+        let rules = {
+          name: 'url',
+          email: 'required|email',
+          age: 'numeric'
+        };
+
+        let validation1 = new Validator(data, rules);
+
+        validation1.passes(); // true
+        validation1.fails(); // false
+
+
+        
+        let validation2 = new Validator({
+          name: 'D',
+          email: ''
+        }, {
+          name: 'size:3',
+          email: 'required|email'
+        });
+
+        validation2.fails(); // true
+        validation2.passes(); // false
+
+        // Error messages
+        validation2.errors.first('email'); // 'The email format is invalid.'
+        validation2.errors.get('email'); // returns an array of all email error messages
+
+
+
+        let validation3 = new Validator({
+          age: 29,
+          name: 1,
+        }, {
+          age: ['required', { 'in': [29, 30] }],
+          name: [{ required_if: ['age', 30] }]
+        });
+
+        validation3.fails(); // true
+        validation3.passes(); // false
+    </script>
+</body>
+</html>
