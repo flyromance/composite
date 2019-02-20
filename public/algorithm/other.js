@@ -67,7 +67,25 @@ function binary_search(arr, value) {
     return -1;
 }
 
-// 递归生成斐波拉契数列 ：0, 1, 1, 2, 3, 5, 8...
+// 0, 1, 1, 2, 3, 5, 8
+// 递归生成斐波拉契数列的值
+function fib(n) {
+    if (n === 0 || n === 1) return n;
+    return fib(n - 1) + fib(n - 2);
+}
+
+// 动态规划
+function fib_(n) {
+    var arr = new Array(n).fill(null);
+    arr[0] = 0;
+    arr[1] = 1;
+    for (var i = 2; i < n; i++) {
+        arr[i] = arr[i - 1] + arr[i -2];
+    }
+    return arr[n];
+}
+
+// 递归生成斐波拉契数列
 function getFibonacci(n) {
     if (n == 0) return [0];
     if (n == 1) return [0, 1];

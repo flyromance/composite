@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="parent"></div>
+    <script>
+      let obj = {
+        name: "1",
+        children: [
+          {
+            name: "1-1",
+            children: [
+              {
+                name: "1-1-1",
+                children: [
+                  {
+                    name: "1-1-1-1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            name: "1-2",
+            children: [
+              {
+                name: "1-2-1",
+                children: [
+                  {
+                    name: "1-2-1-1"
+                  },
+                  {
+                    name: "1-2-1-2"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+
+      // deep 递归
+      function deep1(node) {
+        let ret = [];
+
+        if (node) {
+          ret.push(node);
+          if (node.children) {
+            node.children.forEach(child => {
+              ret = ret.concat(deep1(child));
+            });
+          }
+        }
+
+        return ret;
+      }
+      console.log('deep1 递归', deep1(obj));
+
+      // deep 递归
+      function deep2(node, list = []) {
+        if (node) {
+          list.push(node);
+          if (node.children) {
+            node.children.forEach(child => {
+              deep2(child, list);
+            });
+          }
+        }
+        return list;
+      }
+      console.log('deep2 递归', deep2(obj));
+
+      // deep 非递归
+      function deep3(node) {
+        let ret = [];
+
+        let stack = [node];
+
+        while (stack.length) {
+          let _node = stack.pop();
+
+          if (_node) {
+            ret.push(_node);
+
+            if (_node.children) {
+              for (var i = 0; i < _node.children.length; i++) {
+                stack.push(_node.children[i]);
+              }
+            }
+          }
+        }
+
+        return ret;
+      }
+
+      // breadth
+      function breadth(node) {
+        let ret = [];
+        let stack = [node];
+
+        while (stack.length) {
+          let _node = stack.shift();
+          if (_node) {
+            ret.push(_node);
+
+            if (_node.children) {
+              for (var i = 0; i < _node.children.length; i++) {
+                stack.push(_node.children[i]);
+              }
+            }
+          }
+        }
+
+        return ret;
+      }
+      console.log('breadth', breadth(obj));
+    </script>
+  </body>
+</html>
