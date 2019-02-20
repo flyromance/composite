@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <!-- <div>children1</div>
+    <div>
+      <div>children2</div>
+    </div> -->
+  </div>
+
+  <script>
+
+    function flatArray(arr) {
+      let ret = [];
+
+      arr.forEach(function (item) {
+        if (Array.isArray(item)) {
+          ret = ret.concat(flatArray(item));
+        } else {
+          ret.push(item);
+        }
+      });
+
+      return ret;
+    }
+
+
+    function createVnode(tag, attrs, ...children) {
+      let _children = flatArray(children);
+
+      return {
+        tag,
+        attrs,
+        children: _children,
+      }
+    }
+
+    function createElement(vnode) {
+      if (typeof vnode === 'string') {
+        return document.createTextNode(vnode);
+      }
+
+      let { tag, attrs, children } = vnode;
+
+      let elem = document.createElement(tag);
+
+      if (attrs) {
+        Object.keys(attrs).forEach(function (attr) {
+          elem.setAttribute(attr, attrs[attr]);
+        });
+      }
+
+      if (children && children.length) {
+        children.forEach(function (child) {
+          let childElem = createElement(child);
+          elem.appendChild(childElem);
+        });
+      }
+
+      return elem;
+    }
+
+    function render(container, vdom) {
+      container = typeof container === 'string' ? document.querySelector(container) : container;
+
+      container.appendChild(createElement(vdom));
+    }
+
+    let vnode = createVnode('div', { id: "page" }, [
+      createVnode('div', null, 'children1'),
+      createVnode('div', null, [
+        createVnode('div', null, 'children2')
+      ])
+    ]);
+
+    render('#app', vnode);
+
+  </script>
+</body>
+
+</html>
