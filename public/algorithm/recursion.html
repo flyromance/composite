@@ -1,149 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <h1>递归</h1>
     <div><a href="https://segmentfault.com/a/1190000009857470">递归参考</a></div>
-    <ul>
+    <div>
+      <h2>递归三要点</h2>
+      <ul>
         <li>调用自身</li>
         <li>终止条件</li>
         <li>参数怎么传递</li>
-    </ul>
+      </ul>
+    </div>
+    <div>
+      <h2>应用场景</h2>
+      <ul>
+        <li>深度优先遍历树形结构数据</li>
+        <li>斐波拉数列</li>
+        <li>把虚拟dom渲染为dom</li>
+        <li>二分排序</li>
+      </ul>
+    </div>
 
-    <div id='root'></div>
+    <div id="root"></div>
     <script>
-        var trees = {
-            tagname: 'div',
+      // 阶乘: 递归
+      function factorialize(n) {
+        if (n <= 1) return n;
+        return n * factorialize(n - 1);
+      }
+
+      // 阶乘: 非递归
+      function factorialize_(n) {
+        if (n <= 1) return n;
+        var ret = n;
+        while (n) {
+          ret = ret * --n;
+        }
+        return ret;
+      }
+
+      // 0, 1, 1, 2, 3, 5, 8
+      // 斐波拉契数列的值: 递归
+      function fib(n) {
+        if (n === 0 || n === 1) return n;
+        return fib(n - 1) + fib(n - 2);
+      }
+
+      // 斐波拉契数列的值: 动态规划
+      function _fib(n) {
+        var arr = new Array(n).fill(null);
+        arr[0] = 0;
+        arr[1] = 1;
+        for (var i = 2; i < n; i++) {
+          arr[i] = arr[i - 1] + arr[i - 2];
+        }
+        return arr[n];
+      }
+
+      // 斐波拉契数列: 递归
+      function fibArray(len) {
+        if (len == 1) return [0];
+        if (len == 2) return [0, 1];
+        var arr = getFibonacci(len - 1);
+        arr.push(arr[len - 2] + arr[len - 1]);
+        return arr;
+      }
+
+      // 斐波拉契数列: 动态规划
+      function _fibArray(len) {
+        var arr = new Array(len).fill(null);
+        arr[0] = 0;
+        arr[1] = 1;
+        for (var i = 2; i < len; i++) {
+          arr[i] = arr[i - 1] + arr[i - 2];
+        }
+        return arr;
+      }
+
+      var trees = {
+        tagname: "div",
+        props: {
+          id: "div",
+          "data-target": "div"
+        },
+        children: [
+          {
+            tagname: "p",
+            children: ["this is p."]
+          },
+          {
+            tagname: "ul",
             props: {
-                id: 'div',
-                'data-target': 'div',
+              class: "list"
             },
             children: [
-                {
-                    tagname: 'p',
-                    children: ['this is p.']
+              {
+                tagname: "li",
+                children: ["item1"]
+              },
+              {
+                tagname: "li",
+                props: {
+                  classname: "list-item"
                 },
-                {
-                    tagname: 'ul',
-                    props: {
-                        class: 'list',
-                    },
-                    children: [
-                        {
-                            tagname: 'li',
-                            children: ['item1']
-                        },
-                        {
-                            tagname: 'li',
-                            props: {
-                                classname: 'list-item'
-                            },
-                            children: ['item1']
-                        }
-                    ]
-                }
+                children: ["item1"]
+              }
             ]
+          }
+        ]
+      };
+
+      function renderTree(node) {
+        if (typeof node === "object") {
+          var el = document.createElement(node.tagname);
+          for (var key in node.props) {
+            el.setAttribute(key, node.props[key]);
+          }
+          var children = node.children || [];
+          children.forEach(function(child, index) {
+            el.appendChild(renderTree(child));
+          });
+        } else if (typeof node === "string") {
+          el = document.createTextNode(node);
         }
+        return el;
+      }
 
-        function renderTree(node) {
-            if (typeof node === 'object') {
-                var el = document.createElement(node.tagname);
-                for (var key in node.props) {
-                    el.setAttribute(key, node.props[key]);
-                }
-                var children = node.children || [];
-                children.forEach(function (child, index) {
-                    el.appendChild(renderTree(child))
-                })
-            } else if (typeof node === 'string') {
-                el = document.createTextNode(node);
-            }
-            return el;
-        }
-
-        document.getElementById('root').appendChild(renderTree(trees))
-
-        function Element(tagname, props, children) {
-            this.tagname = tagname || 'div';
-            this.props = props || {};
-            this.children = children || [];
-        }
-
-        Element.prototype.render = function () {
-            var el = document.createElement(this.tagname);
-
-            for (var key in this.props) {
-                el.setAttribute(key, this.props[key]);
-            }
-
-            this.children.forEach(function (child, index) {
-                var _child = null;
-                if (child instanceof Element) {
-                    _child = child.render()
-                } else if (typeof child === 'object') {
-                    _child = new Element(child.tagname, child.props, child.children).render()
-                } else if (typeof child === 'string') {
-                    _child = document.createTextNode(child);
-                }
-                _child && el.appendChild(_child)
-            })
-
-            return el;
-        }
-
-        function render(obj, id) {
-            document.getElementById(id).appendChild(obj)
-        }
-
-        // render(new Element(trees.tagname, trees.props, trees.children).render(), 'root')
+      document.getElementById("root").appendChild(renderTree(trees));
     </script>
 
     <script type="text/javascript">
-
-        // 考察递归
-        var data = {
-            id: '1',
-            name: 'node1',
+      // 考察递归
+      var data = {
+        id: "1",
+        name: "node1",
+        children: [
+          {
+            id: "2",
+            name: "node2"
+          },
+          {
+            id: "3",
+            name: "node3",
             children: [
-                {
-                    id: '2',
-                    name: 'node2'
-                },
-                {
-                    id: '3',
-                    name: 'node3',
-                    children: [
-                        {
-                            id: '4',
-                            name: 'node4'
-                        }, {
-                            id: '5',
-                            name: 'node5'
-                        }
-                    ]
-                },
-            ],
-        };
+              {
+                id: "4",
+                name: "node4"
+              },
+              {
+                id: "5",
+                name: "node5"
+              }
+            ]
+          }
+        ]
+      };
 
-        function getNodeById(node, id) {
-            if (node.id === id) return node;
+      function getNodeById(node, id) {
+        if (node.id === id) return node;
 
-            var children = node.children || [];
-            var _node = null;
-            children.forEach(function (child, index) {
-                _node = getNodeById(child, id);
-            });
-            return _node;
-        }
+        var children = node.children || [];
+        var _node = null;
+        children.forEach(function(child, index) {
+          _node = getNodeById(child, id);
+        });
+        return _node;
+      }
 
-        console.log(getNodeById(data, '1'))
+      console.log(getNodeById(data, "1"));
     </script>
-</body>
-
+  </body>
 </html>

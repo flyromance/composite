@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <ul>
+        <li>先进后出</li>
+        <li>深度优先算法</li>
+      </ul>
+    </div>
+    <script>
+      class Stack {
+        constructor() {
+          this.stack = [];
+        }
+
+        push(val) {
+          this.stack.push(val);
+        }
+
+        pop() {
+          this.stack.pop();
+        }
+
+        // 获取最后一个值
+        peek() {
+          return this.stack[this.size() - 1];
+        }
+
+        size() {
+          return this.stack.length;
+        }
+
+        isEmpty() {
+          return this.size() === 0;
+        }
+      }
+
+      let data = {
+        name: 1,
+        children: [
+          {
+            name: 2,
+            children: [{ name: 3 }]
+          },
+          {
+            name: 4,
+            children: [{ name: 5 }]
+          }
+        ]
+      };
+
+      // 模拟递归，深度优先
+      function traverData(data) {
+        let stack = [data];
+        let ret = [];
+        while (stack.length) {
+          let _node = stack.pop();
+          console.log(_node.name);
+          if (_node.children) {
+            for (let i = _node.children.length - 1; i >= 0; i--) {
+              stack.push(_node.children[i]);
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

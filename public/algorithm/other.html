@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 随机生成指定长度的字符串
+      function randomString(n) {
+        var str = "abcdefghijklmnopqrstuvwxyz9876543210";
+        var i = 0,
+          index,
+          strLen = str.length,
+          ret = "";
+        while (i < n) {
+          index = Math.floor(Math.random() * strLen);
+          ret += str.charAt(index);
+          i++;
+        }
+
+        return ret;
+      }
+
+      // 寻找最大的公共字符串
+      function findMax(a, b) {
+        var ret = "";
+        var temp = "";
+        var max = 0;
+        var maxStr = "";
+
+        for (var i = 0; i < a.length; i++) {
+          for (var j = i; j < a.length; j++) {
+            temp = a.slice(i, j + 1);
+            if (b.includes(temp)) {
+              if (temp.length > max) {
+                maxStr = temp;
+                max = temp.length;
+              }
+            }
+          }
+        }
+
+        return `maxStr: ${maxStr}; max length: ${max};`;
+      }
+      console.log(findMax("raven", "havenoc"));
+
+
+      // 最长递增子序列
+      // 最长递增子序列意思是在一组数字中，找出最长一串递增的数字，比如
+      // 0, 3, 4, 17, 2, 8, 6, 10
+    </script>
+  </body>
+</html>

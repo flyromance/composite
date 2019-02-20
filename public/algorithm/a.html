@@ -1,40 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 二进制转十进制
+      let a = "100001";
+      let _a = parseInt(a, 2); // 表示a是2进制，需要转为10进制
+      console.log(a, _a);
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-</head>
+      // 自己实现一个
+      function _parseInt(val, num = 10) {
+        if (num === 10) return val;
 
-<body>
-<script>
-// 寻找最大的公共字符串
-function findMax(a, b) {
-	var ret = '';
-	var temp = '';
-	var max = 0;
-	var maxStr = '';
+        let arr = (val + "").split("").reverse();
+        let total = 0;
+        for (var i = 0; i < arr.length; i++) {
+          total += Math.pow(num, i) * arr[i];
+        }
+        return total;
+      }
 
-	for (var i = 0; i < a.length; i++) {
-		for (var j = i; j < a.length; j++) {
-			temp = a.slice(i, j + 1);
-			if (b.includes(temp)) {
-				if (temp.length > max) {
-					maxStr = temp;
-					max = temp.length;
-				}
-			}
-		}
-	}
+      // 十进制转二进制
+      let b = _a.toString(2); // _a是十进制，需要转为二进制
+      console.log(_a, b);
 
-	return `maxStr: ${maxStr}; max length: ${max};`;
-}
-
-console.log(findMax('raven', 'havenoc'));
-</script>
-</body>
+      function toX(val, num = 10) {
+        let a = Math['log' + num](val);
+        let rest = val - Math.pow(num, a);
+        if (!rest) return 
+      }
+    </script>
+  </body>
 </html>
-
-

@@ -1,89 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-</head>
-
-<body>
-  <div id="app">
-    <!-- <div>children1</div>
+  <body>
+    <div><a href="https://segmentfault.com/a/1190000004029168">深度剖析：如何实现一个 Virtual DOM 算法</a></div>
+    <div id="app">
+      <!-- <div>children1</div>
     <div>
       <div>children2</div>
     </div> -->
-  </div>
+    </div>
 
-  <script>
+    <script>
+      function flatArray(arr) {
+        let ret = [];
 
-    function flatArray(arr) {
-      let ret = [];
+        arr.forEach(function(item) {
+          if (Array.isArray(item)) {
+            ret = ret.concat(flatArray(item));
+          } else {
+            ret.push(item);
+          }
+        });
 
-      arr.forEach(function (item) {
-        if (Array.isArray(item)) {
-          ret = ret.concat(flatArray(item));
-        } else {
-          ret.push(item);
+        return ret;
+      }
+
+      function createVnode(tag, props, ...children) {
+        let _children = flatArray(children);
+
+        return {
+          tag,
+          props,
+          children: _children
+        };
+      }
+
+      function createElement(vnode) {
+        if (typeof vnode === "string") {
+          return document.createTextNode(vnode);
         }
-      });
 
-      return ret;
-    }
+        let { tag, props, children } = vnode;
 
+        let elem = document.createElement(tag);
 
-    function createVnode(tag, attrs, ...children) {
-      let _children = flatArray(children);
+        if (props) {
+          Object.keys(props).forEach(function(propName) {
+            elem.setAttribute(propName, props[propName]);
+          });
+        }
 
-      return {
-        tag,
-        attrs,
-        children: _children,
+        if (children && children.length) {
+          children.forEach(function(child) {
+            let childElem = createElement(child);
+            elem.appendChild(childElem);
+          });
+        }
+
+        return elem;
       }
-    }
 
-    function createElement(vnode) {
-      if (typeof vnode === 'string') {
-        return document.createTextNode(vnode);
+      function render(container, vdom) {
+        container = typeof container === "string" ? document.querySelector(container) : container;
+
+        container.appendChild(createElement(vdom));
       }
 
-      let { tag, attrs, children } = vnode;
+      function diff(oldVnode, newVnode) {
+        let patches = {};
+        let index = 0;
+        diffNode(oldVnode, newVnode, index, patches);
+        return patches;
+      }
 
-      let elem = document.createElement(tag);
+      function diffNode(oldVnode, newVnode, index, patches) {
+        let patch = [];
 
-      if (attrs) {
-        Object.keys(attrs).forEach(function (attr) {
-          elem.setAttribute(attr, attrs[attr]);
+        if (oldVnode.tag === newVnode.tag && oldVnode.key == newVnode.key) {
+          // 对比属性
+          let propPatches = diffProps(oldVnode.props, newVnode.props);
+          if (propPatches.length) patch.push({ type: "prop", value: propPatches });
+
+          // 对比子节点
+          diffChildren(oldVnode.children, newVnode.children, index, patches);
+
+        } else {
+          patch.push({ type: "replaceNode", node: newNode });
+        }
+
+        if (patch.length) {
+          if (patches[index]) {
+            patches[index] = patches[index].concat(patch);
+          } else {
+            patches[index] = patch;
+          }
+        }
+      }
+
+      function diffChildren(oldChildren, newChildren, index, patches) {
+        let { changes, list } = diffList(oldChildren, newChildren);
+
+
+      }
+
+      function diffList(oldList, newList) {
+
+      }
+
+      function diffProps(oldProps = {}, newProps = {}) {
+        let ret = [];
+        let oldPropNames = Object.keys(oldProps);
+        let newPropNames = Object.keys(newProps);
+
+        oldPropNames.forEach(function(propName) {
+          if (newPropNames.indexOf(propName) === -1) {
+            // 删除
+            ret.push({ type: "delete", propName });
+          } else {
+            ret.push({ type: "change", propName, propValue: newProps[propName] });
+          }
         });
-      }
 
-      if (children && children.length) {
-        children.forEach(function (child) {
-          let childElem = createElement(child);
-          elem.appendChild(childElem);
+        newPropNames.forEach(function(propName) {
+          if (oldPropNames.indexOf(propName) === -1) {
+            // 新增
+            ret.push({ type: "add", propName, propValue: newProps[propName] });
+          }
         });
+
+        return ret;
       }
 
-      return elem;
-    }
+      let vnode = createVnode("div", { id: "page" }, [
+        createVnode("div", null, "children1"),
+        createVnode("div", null, [createVnode("div", null, "children2")])
+      ]);
 
-    function render(container, vdom) {
-      container = typeof container === 'string' ? document.querySelector(container) : container;
-
-      container.appendChild(createElement(vdom));
-    }
-
-    let vnode = createVnode('div', { id: "page" }, [
-      createVnode('div', null, 'children1'),
-      createVnode('div', null, [
-        createVnode('div', null, 'children2')
-      ])
-    ]);
-
-    render('#app', vnode);
-
-  </script>
-</body>
-
+      render("#app", vnode);
+    </script>
+  </body>
 </html>
