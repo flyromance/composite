@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+<script>
+// 寻找最大的公共字符串
+function findMax(a, b) {
+	var ret = '';
+	var temp = '';
+	var max = 0;
+	var maxStr = '';
+
+	for (var i = 0; i < a.length; i++) {
+		for (var j = i; j < a.length; j++) {
+			temp = a.slice(i, j + 1);
+			if (b.includes(temp)) {
+				if (temp.length > max) {
+					maxStr = temp;
+					max = temp.length;
+				}
+			}
+		}
+	}
+
+	return `maxStr: ${maxStr}; max length: ${max};`;
+}
+
+console.log(findMax('raven', 'havenoc'));
+</script>
+</body>
+</html>
+
+
