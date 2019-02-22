@@ -10,7 +10,8 @@
     <div>
       <ul>
         <li>先进后出</li>
-        <li>深度优先算法</li>
+        <li>模拟递归（深度优先算法）</li>
+        <li>解析html文档</li>
       </ul>
     </div>
     <script>
@@ -69,6 +70,72 @@
           }
         }
       }
+
+
+      let htmlStr = `
+        <div id='app'>
+          <div class="header" style="color:red;"></div>
+          <div class="body">
+            <div class="sider">
+              <img src="xxx" />
+            </div>
+            <div class="content"></div>
+          </div>
+          <div class="footer"></div>
+        </div>
+      `;
+
+      /*
+        {
+          tag: 'div',
+          props: {
+            id: 'app',
+          },
+          children: [
+            ...
+          ]
+        }
+      */
+      function htmlParser(input) {
+        let ret;
+
+        let reg = /<(\/?)(\w+)(?:\s+(.+?))?(\/?)>/g;
+        let match, tokens = [];
+        while(match = reg.exec(input)) {
+          let token = {
+            tag: match[2],
+            props: match[3],
+          };
+
+          if (match[1] === '/') {
+            token.end = true;
+          } else {
+            token.start = true;
+          }
+
+          if (match[4] === '/') {
+            token.start = true;
+            token.end = true;
+          }
+
+          tokens.push(token);
+        }
+
+        let root = tokens.shift();
+        current = root;
+        while (item = tokens.shift()) {
+          if (item.start) {
+            current.children = current.children || [];
+            current.children.push(item);
+          } else if (item.end) {
+            
+          }
+        }
+
+        return tokens;
+      }
+
+      console.log(htmlParser(htmlStr));
     </script>
   </body>
 </html>

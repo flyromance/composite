@@ -9,7 +9,7 @@
 
   <body>
     <div><a href="https://segmentfault.com/a/1190000004029168">深度剖析：如何实现一个 Virtual DOM 算法</a></div>
-    <div id="app">
+    <div id="app" style="color: red;">
       <!-- <div>children1</div>
     <div>
       <div>children2</div>
@@ -17,12 +17,12 @@
     </div>
 
     <script>
-      function flatArray(arr) {
+      function flatten(arr) {
         let ret = [];
 
         arr.forEach(function(item) {
           if (Array.isArray(item)) {
-            ret = ret.concat(flatArray(item));
+            ret = ret.concat(flatten(item));
           } else {
             ret.push(item);
           }
@@ -32,7 +32,7 @@
       }
 
       function createVnode(tag, props, ...children) {
-        let _children = flatArray(children);
+        let _children = flatten(children);
 
         return {
           tag,

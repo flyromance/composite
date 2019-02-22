@@ -47,10 +47,49 @@
       }
       console.log(findMax("raven", "havenoc"));
 
-
       // 最长递增子序列
       // 最长递增子序列意思是在一组数字中，找出最长一串递增的数字，比如
       // 0, 3, 4, 17, 2, 8, 6, 10
+      function aaa(data) {
+        let ret = [];
+
+
+        return ret;
+      }
+
+      // 穷举组合
+      function emu(data, n, sum) {
+        let ret = [];
+        let stack = [];
+        let flag = true;
+
+        function recur(step) {
+          if (step === n) {
+            ret.push(stack.slice());
+            return;
+          }
+
+          for (var i = 0; i < data.length; i++) {
+            for (var j = 0; j < stack.length; j++) {
+              if (data[i] === stack[j]) {
+                flag = false;
+              }
+            }
+
+            if (flag) {
+              stack.push(data[i]);
+              recur(step + 1);
+              stack.pop(data[i]);
+            }
+
+            flag = true;
+          }
+        }
+
+        recur(0);
+
+        return ret;
+      }
     </script>
   </body>
 </html>

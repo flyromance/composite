@@ -1,51 +1,143 @@
-var JTemp = function() {
-    function Temp(htmlId, p) {
-        p = p || {}; //配置信息，大部分情况可以缺省
-        this.htmlId = htmlId;
-        this.fun = null;
-        this.oName = p.oName || 'p';
-        this.TEMP_S = p.tempS || '<%=';
-        this.TEMP_E = p.tempE || '=%>';
-        this.getFun();
+import { render } from "./artTemplate/artTemplate";
+
+/*
+<ul>
+<% for (var i = 0; i < list.length; i++) { %>
+    <li><%= list[i] %></li>
+<% } %>
+</ul>
+
+let ret = '';
+with(data) {
+    ret += '<ul>';
+    for (var i = 0; i < list.length; i++) {
+        ret += '<li>;
+        ret += list[i]; // ret += escape(list[i]);
+        ret += '</li>';
     }
-    Temp.prototype = {
-        getFun: function() {
-            var _ = this,
-                str = $('#' + _.htmlId).html();
-            if (!str) _.err('error: no temp!!');
-            var str_ = 'var ' + _.oName + '=this,f=\'\';',
-                s = str.indexOf(_.TEMP_S),
-                e = -1,
-                p,
-                sl = _.TEMP_S.length,
-                el = _.TEMP_E.length;
-            for (; s >= 0;) {
-                e = str.indexOf(_.TEMP_E);
-                if (e < s) alert(':( ERROR!!');
-                str_ += 'f+=\'' + str.substring(0, s) + '\';';
-                p = _.trim(str.substring(s + sl, e));
-                if (p.indexOf('=') !== 0) { //js语句
-                    str_ += p;
-                } else { //普通语句
-                    str_ += 'f+=' + p.substring(1) + ';';
-                }
-                str = str.substring(e + el);
-                s = str.indexOf(_.TEMP_S);
-            }
-            str_ += 'f+=\'' + str + '\';';
-            str_ = str_.replace(/\n/g, ''); //处理换行
-            var fs = str_ + 'return f;';
-            this.fun = Function(fs);
-        },
-        build: function(p) {
-            return this.fun.call(p);
-        },
-        err: function(s) {
-            alert(s);
-        },
-        trim: function(s) {
-            return s.trim ? s.trim() : s.replace(/(^\s*)|(\s*$)/g, "");
+    ret += '</ul>';
+}
+return ret;
+*/
+
+// 反转义字符
+function unescape(s) {
+    return s
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&#039;/g, "'")
+        .replace(/&#39;/g, "'");
+};
+
+// 转义字符
+function escape(s) {
+    if (!s) return s;
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/'/g, '&#39;');
+};
+
+
+function escapeHtml(htmlStr) {
+    return htmlStr.replace(/<(.+?)>/g, function ($0, $1) {
+        return '&lt;' + $1 + '&gt;';
+    });
+}
+
+function myTemplate(templateStr) {
+    let reg = /(<%[=-]?)(.+?)(?:%>)/g;
+    let index = 0;
+    let match;
+    let fnBody = '';
+
+    while(match = reg.exec(templateStr)) {
+        fnBody += 'ret += "' + templateStr.slice(index, match.index) + '";\n';
+        switch (match[1]) {
+            case "<%=": 
+                fnBody += 'ret += ' + match[2] + ';\n';
+                break;
+            case "<%-": 
+                // 转义
+                fnBody += 'ret += escapeHtml(' + match[2] + ');\n';
+                break;
+            case "<%":
+            default: 
+                fnBody += match[2] + '\n';
+                break;
         }
-    };
-    return Temp;
-}();
+        index = reg.lastIndex;
+    }
+
+    if (templateStr.slice(index)) {
+        fnBody += 'ret += "' + templateStr.slice(index) + '"';   
+    }
+
+    let fnWrap = `
+        let ret = '';
+        with(data) {
+            ${fnBody}
+        }
+        return ret;
+    `;
+
+    let fn = new Function('data', fnWrap);
+
+    return fn;
+}
+
+
+/*
+ 调用方法
+ {{# v }}
+ {{ v }}
+
+{{if admin === 1}}
+    {{each list}}
+        <div>{{$index}}. {{$value.user}}</div>
+    {{/each}}
+{{else if admin === 2 }}
+
+{{else}}
+
+{{/if}}
+
+to
+
+<%if (admin) { %>
+    <%for (var i=0;i<list.length;i++) {%>
+        <div><%=i%>. <%=list[i].user%></div>
+    <%}%>
+<% } else if (admin === 2) { %>
+
+<% } else { %>
+
+<% } %>
+*/
+
+function myTemp(templateStr) {
+    let reg = /(?:\{\{(\/?))(.+?)(?:\}\})/g;
+    let stack = [];
+    let match = reg.exec(templateStr);
+    
+    while (stack.length) {
+
+    }
+
+    let renderFn = new Function();
+    return renderFn;
+}
+
+if (1) {
+
+} else if (2) {
+
+} else {
+
+}

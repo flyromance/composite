@@ -161,6 +161,29 @@
         find(this.root, value, handler);
       };
 
+      // 找出二叉树和值为n的路径
+      BinaryTree.prototype.sums = function(value, handler) {
+        let arr = [];
+
+        function travel(node, total) {
+          if (node.left) {
+            travel(node.left, node.value + total);
+          }
+
+          if (node.right) {
+            travel(node.right, node.value + total);
+          }
+
+          if (!node.left && !node.right) {
+            arr.push(node.value + total);
+          }
+        }
+
+        travel(this.root, 0);
+
+        return arr;
+      };
+
       var binaryTree = new BinaryTree(8);
 
       binaryTree.insert(2);
