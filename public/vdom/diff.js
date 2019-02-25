@@ -163,7 +163,7 @@ function getKeys(list) {
       let key;
       if (isString(item)) {
         key = [item];
-      } else if (item instanceof Element) {
+      } else if (item instanceof Node) {
         key = item.key;
       }
       keys.push(key);

@@ -13,32 +13,19 @@
       <li><a href="https://github.com/KieSun/My-wheels">my-wheels</a></li>
     </ul>
 
-    <div id="app">
-      <!-- 
-        <div>children1</div>
-        <div>
-          <div>children2</div>
-        </div> 
-      -->
-    </div>
+    <div id="app"></div>
 
     <script src="./util.js"></script>
     <script src="./element.js"></script>
     <script src="./diff.js"></script>
     <script src="./patch.js"></script>
     <script>
-      function render(container, vdom) {
-        container = typeof container === "string" ? document.querySelector(container) : container;
-
-        container.appendChild(createElement(vdom));
-      }
-
       let vnode = createVnode("div", { id: "page" }, [
         createVnode("div", null, "children1"),
         createVnode("div", null, [createVnode("div", null, "children2")])
       ]);
 
-      render("#app", vnode);
+      vnode.render("#app");
 
       setTimeout(function() {
         let newVnode = createVnode("div", { id: "page" }, [
@@ -47,7 +34,7 @@
         ]);
 
         let patches = diff(newVnode, vnode);
-
+        console.log(patches);
         patch(document.getElementById("app"), patches);
       }, 3000);
     </script>

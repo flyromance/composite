@@ -39,13 +39,13 @@ function changeDom(node, changes) {
           let dom;
           if (isString(change.node)) {
             dom = document.createTextNode(change.node);
-          } else if (change.node instanceof Element) {
-            dom = change.node.create();
+          } else if (change.node instanceof Node) {
+            dom = change.node.createElement();
           }
           node.insertBefore(dom, node.childNodes[change.index]);
           break;
         case StateEnums.Replace:
-          node.parentNode.replaceChild(change.node.create(), node);
+          node.parentNode.replaceChild(change.node.createElement(), node);
           break;
         case StateEnums.Move:
           let fromNode = node.childNodes[change.from];
