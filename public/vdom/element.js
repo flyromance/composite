@@ -1,17 +1,3 @@
-function flatten(arr) {
-  let ret = [];
-
-  arr.forEach(function(item) {
-    if (Array.isArray(item)) {
-      ret = ret.concat(flatten(item));
-    } else {
-      ret.push(item);
-    }
-  });
-
-  return ret;
-}
-
 function createVnode(tag, props, ...children) {
   console.log(children);
   let _children = flatten(children);

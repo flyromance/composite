@@ -9,14 +9,17 @@
 
   <body>
     <div><a href="https://segmentfault.com/a/1190000004029168">深度剖析：如何实现一个 Virtual DOM 算法</a></div>
-    <div id="app" style="color: red;">
-      <!-- <div>children1</div>
-    <div>
-      <div>children2</div>
-    </div> -->
+    <div id="app">
+      <!-- 
+        <div>children1</div>
+        <div>
+          <div>children2</div>
+        </div> 
+      -->
     </div>
 
-    <!-- <script src="./elememt1.js"></script> -->
+    <script src="./util.js"></script>
+    <script src="./element.js"></script>
     <script src="./diff.js"></script>
     <script src="./patch.js"></script>
     <script>
@@ -26,14 +29,21 @@
         container.appendChild(createElement(vdom));
       }
 
-      
-
       let vnode = createVnode("div", { id: "page" }, [
-        createVnode("div", null, ["children1", createVnode("div", {}, "children3")]),
+        createVnode("div", null, 'children1'),
         createVnode("div", null, [createVnode("div", null, "children2")])
       ]);
 
       render("#app", vnode);
+
+      setTimeout(function() {
+        let newVnode = createVnode("div", { id: "page" }, [
+          createVnode("div", null, ["children1", createVnode("div", {}, "children3")]),
+          createVnode("div", null, [createVnode("div", null, "children2")])
+        ]);
+
+        // patch(newVnode, vnode);
+      }, 3000);
     </script>
   </body>
 </html>
