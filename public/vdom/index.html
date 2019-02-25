@@ -16,122 +16,17 @@
     </div> -->
     </div>
 
+    <!-- <script src="./elememt1.js"></script> -->
+    <script src="./diff.js"></script>
+    <script src="./patch.js"></script>
     <script>
-      function flatten(arr) {
-        let ret = [];
-
-        arr.forEach(function(item) {
-          if (Array.isArray(item)) {
-            ret = ret.concat(flatten(item));
-          } else {
-            ret.push(item);
-          }
-        });
-
-        return ret;
-      }
-
-      function createVnode(tag, props, ...children) {
-        console.log(children);
-        let _children = flatten(children);
-
-        return {
-          tag,
-          props,
-          children: _children
-        };
-      }
-
-      function createElement(vnode) {
-        if (typeof vnode === "string") {
-          return document.createTextNode(vnode);
-        }
-
-        let { tag, props, children } = vnode;
-
-        let elem = document.createElement(tag);
-
-        if (props) {
-          Object.keys(props).forEach(function(propName) {
-            elem.setAttribute(propName, props[propName]);
-          });
-        }
-
-        if (children && children.length) {
-          children.forEach(function(child) {
-            let childElem = createElement(child);
-            elem.appendChild(childElem);
-          });
-        }
-
-        return elem;
-      }
-
       function render(container, vdom) {
         container = typeof container === "string" ? document.querySelector(container) : container;
 
         container.appendChild(createElement(vdom));
       }
 
-      function diff(oldVnode, newVnode) {
-        let patches = {};
-        let index = 0;
-        diffNode(oldVnode, newVnode, index, patches);
-        return patches;
-      }
-
-      function diffNode(oldVnode, newVnode, index, patches) {
-        let patch = [];
-
-        if (oldVnode.tag === newVnode.tag && oldVnode.key == newVnode.key) {
-          // 对比属性
-          let propPatches = diffProps(oldVnode.props, newVnode.props);
-          if (propPatches.length) patch.push({ type: "prop", value: propPatches });
-
-          // 对比子节点
-          diffChildren(oldVnode.children, newVnode.children, index, patches);
-        } else {
-          patch.push({ type: "replaceNode", node: newNode });
-        }
-
-        if (patch.length) {
-          if (patches[index]) {
-            patches[index] = patches[index].concat(patch);
-          } else {
-            patches[index] = patch;
-          }
-        }
-      }
-
-      function diffChildren(oldChildren, newChildren, index, patches) {
-        let { changes, list } = diffList(oldChildren, newChildren);
-      }
-
-      function diffList(oldList, newList) {}
-
-      function diffProps(oldProps = {}, newProps = {}) {
-        let ret = [];
-        let oldPropNames = Object.keys(oldProps);
-        let newPropNames = Object.keys(newProps);
-
-        oldPropNames.forEach(function(propName) {
-          if (newPropNames.indexOf(propName) === -1) {
-            // 删除
-            ret.push({ type: "delete", propName });
-          } else {
-            ret.push({ type: "change", propName, propValue: newProps[propName] });
-          }
-        });
-
-        newPropNames.forEach(function(propName) {
-          if (oldPropNames.indexOf(propName) === -1) {
-            // 新增
-            ret.push({ type: "add", propName, propValue: newProps[propName] });
-          }
-        });
-
-        return ret;
-      }
+      
 
       let vnode = createVnode("div", { id: "page" }, [
         createVnode("div", null, ["children1", createVnode("div", {}, "children3")]),
