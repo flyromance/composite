@@ -87,33 +87,90 @@
     </script>
 
     <script type="javascript/babel">
-      class AA {
+      class AA extends React.Component {
         constructor() {
           super();
 
           this.state = {
             all: false,
-            ...
+            a: false,
+            b: false,
+            c: false,
+            d: false,
           }
         }
 
-        handleChange() {
-
+        handleChange = (val) => () => {
+          switch(val) {
+            case "all":
+            // 处理数据逻辑
+            this.setState({
+              ...this.state,
+              all: !this.state.all,
+            });
+            break;
+            case "a":
+            break;
+          }
         }
 
         render() {
           let { all, a, b, c, d } = this.state;
           return <div>
-              <div><label>全选<input type="checkbox" checked={all} value="all" onChange={this.handleChange}/><label></div>
+              <div><label>全选<input type="checkbox" checked={all} value="all" onChange={this.handleChange('all')}/><label></div>
               <div>
-                  <label>水<input type="checkbox" checked={a}  value="a" /><label>
-                  <label>草<input type="checkbox"  checked={b} value="b"/><label>
-                  <label>蔬菜<input type="checkbox" checked={c}  value="c" /><label>
-                  <label>水果<input type="checkbox" checked={d}  value="d" /><label>
+                  <label>水<input type="checkbox" checked={a}  value="a" onChange={this.handleChange('a')}/><label>
+                  <label>草<input type="checkbox"  checked={b} value="b"onChange={this.handleChange('b')}/><label>
+                  <label>蔬菜<input type="checkbox" checked={c}  value="c" onChange={this.handleChange('c')}/><label>
+                  <label>水果<input type="checkbox" checked={d}  value="d" onChange={this.handleChange('d')}/><label>
               </div>
           </div>
         }
       }
+
+      ReactDom.render(document.getElementById('#app'), AA, function () {});
+    </script>
+
+    <script>
+      new Vue({
+        el: "#app",
+        props: {},
+        data() {
+          return {
+            a: false,
+            b: false
+          };
+        },
+
+        computed: {
+          all: {
+            get() {
+              return this.a && this.b && this.c && this.d;
+            },
+            set(val) {
+              this.a = this.b = this.c = this.d = val;
+            }
+          }
+        },
+
+        methods: {
+          handleChange(type) {
+            this[type] = !this[type];
+          }
+        },
+
+        template: `
+          <div>
+              <div><label>全选<input type="checkbox" checked={all} value="all" onChange={{handleChange('all')}} /><label></div>
+              <div>
+                  <label>水<input type="checkbox" checked={a}  value="a" onChange={{handleChange('a')}}/><label>
+                  <label>草<input type="checkbox"  checked={b} value="b" onChange={{handleChange('b')}}/><label>
+                  <label>蔬菜<input type="checkbox" checked={c}  value="c" onChange={{handleChange('c')}}/><label>
+                  <label>水果<input type="checkbox" checked={d}  value="d" onChange={{handleChange('d')}}/><label>
+              </div>
+          </div>
+        `
+      });
     </script>
   </body>
 </html>

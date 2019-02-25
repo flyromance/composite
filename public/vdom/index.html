@@ -32,6 +32,7 @@
       }
 
       function createVnode(tag, props, ...children) {
+        console.log(children);
         let _children = flatten(children);
 
         return {
@@ -89,7 +90,6 @@
 
           // 对比子节点
           diffChildren(oldVnode.children, newVnode.children, index, patches);
-
         } else {
           patch.push({ type: "replaceNode", node: newNode });
         }
@@ -105,13 +105,9 @@
 
       function diffChildren(oldChildren, newChildren, index, patches) {
         let { changes, list } = diffList(oldChildren, newChildren);
-
-
       }
 
-      function diffList(oldList, newList) {
-
-      }
+      function diffList(oldList, newList) {}
 
       function diffProps(oldProps = {}, newProps = {}) {
         let ret = [];
@@ -138,7 +134,7 @@
       }
 
       let vnode = createVnode("div", { id: "page" }, [
-        createVnode("div", null, "children1"),
+        createVnode("div", null, ["children1", createVnode("div", {}, "children3")]),
         createVnode("div", null, [createVnode("div", null, "children2")])
       ]);
 

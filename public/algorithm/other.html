@@ -24,7 +24,7 @@
         return ret;
       }
 
-      // 寻找最大的公共字符串
+      // 寻找两个字符串的最大公共字符串
       function findMax(a, b) {
         var ret = "";
         var temp = "";
@@ -47,16 +47,30 @@
       }
       console.log(findMax("raven", "havenoc"));
 
-      // 最长递增子序列
+      // 最长递增子序列 => 动态规划
       // 最长递增子序列意思是在一组数字中，找出最长一串递增的数字，比如
       // 0, 3, 4, 17, 2, 8, 6, 10
-      function aaa(data) {
-        let ret = [];
+      function aaa(input) {
+        if (input.length === 0) return 0;
+        let arr = new Array(input.length).fill(1);
+        let max = 0;
 
+        for (var i = 1; i < input.length; i++) {
+          for (var j = 0; j < i; j++) {
+            if (input[i] > input[j]) {
+              arr[i] = Math.max(arr[i], arr[j] + 1);
+            }
+          }
+        }
 
-        return ret;
+        for (var k = 0; k < arr.length; k++) {
+          max = Math.max(max, arr[k]);
+        }
+
+        return max;
       }
 
+      // 给定一个数组，取出n个值，使得其和为sum？
       // 穷举组合
       function emu(data, n, sum) {
         let ret = [];
