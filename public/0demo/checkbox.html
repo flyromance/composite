@@ -49,16 +49,32 @@
           render() {
             container.innerHTML = view.getHtml();
           },
+          find(selector) {
+            return container.querySelectorAll(selector);
+          },
           bind() {
+            let that = this;
             container.addEventListener("change", function(e) {
               let value = e.target.value;
               let checked = e.target.checked; // 变化后的
-              switch(value) {
-                case 'all':
-                if (checked) {
-                  
-                }
-                break;
+              switch (value) {
+                case "all":
+                  if (checked) {
+                    that.find("[value=a]")[0].checked = 1;
+                    that.find("[value=b]")[0].checked = 1;
+                    that.find("[value=c]")[0].checked = 1;
+                    that.find("[value=d]")[0].checked = 1;
+                  } else {
+                    that.find("[value=a]")[0].checked = 0;
+                    that.find("[value=b]")[0].checked = 0;
+                    that.find("[value=c]")[0].checked = 0;
+                    that.find("[value=d]")[0].checked = 0;
+                  }
+                  break;
+                case "a":
+                  if (checked) {
+                  }
+                  break;
               }
             });
           }
@@ -68,6 +84,36 @@
       }
 
       checkboxLinkage(document.querySelector("#app"));
+    </script>
+
+    <script type="javascript/babel">
+      class AA {
+        constructor() {
+          super();
+
+          this.state = {
+            all: false,
+            ...
+          }
+        }
+
+        handleChange() {
+
+        }
+
+        render() {
+          let { all, a, b, c, d } = this.state;
+          return <div>
+              <div><label>全选<input type="checkbox" checked={all} value="all" onChange={this.handleChange}/><label></div>
+              <div>
+                  <label>水<input type="checkbox" checked={a}  value="a" /><label>
+                  <label>草<input type="checkbox"  checked={b} value="b"/><label>
+                  <label>蔬菜<input type="checkbox" checked={c}  value="c" /><label>
+                  <label>水果<input type="checkbox" checked={d}  value="d" /><label>
+              </div>
+          </div>
+        }
+      }
     </script>
   </body>
 </html>
