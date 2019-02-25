@@ -1,33 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
 </head>
+
 <body>
   <script>
     class LinkNode {
       constructor(val) {
         this.value = val;
+        this.next = null;
       }
     }
 
-    class LinkList {
+    class LinkedList {
       constructor() {
-        this.next = null; 
+        this.head = new LinkNode('head');
       }
 
-      insert(val) {
+      insert(val, newVal) {
+        let node = this.find(val);
+        if (node) {
+          let nextNode = node.next;
+          node.next = new LinkNode(newVal);
+          if (node.next) {
+            node.next.next = nextNode;
+          }
+        }
+      }
+
+      find(val) {
+        var curNode = this.head;
+
+        while (curNode) {
+          if (curNode.value === val) {
+            return curNode;
+          }
+          curNode = curNode.next;
+        }
+      }
+
+      findPrv(val) {
+        var curNode = this.head;
+
+        while (curNode) {
+          let nextNode = curNode.next;
+          if (nextNode && nextNode.value === val) {
+            return curNode;
+          }
+          curNode = curNode.next;
+        }
+      }
+
+      remove(val) {
+        let node = this.find(val);
+        if (node) {
+          let preNode = this.findPrv(val);
+          if (preNode) {
+            preNode.next = node.next;
+          }
+        }
+      }
+
+      display() {
 
       }
 
-      add(val) {
-        this.next
+    }
+
+    let linkedList = new LinkedList();
+
+    linkedList.insert('head', 1);
+    linkedList.insert('head', 2);
+    linkedList.insert('head', 3);
+
+
+    // 双向linklist
+    function Node(val) {
+      this.value = val;
+      this.prev = null;
+      this.next = null;
+    }
+
+
+    class DLinkList {
+      constructor() {
+        this.head = new Node('head');
       }
-      
-    }  
+
+      insert(val, newVal) {
+        let newNode = new Node(newVal);
+        let curNode = this.find(val);
+        let nextNode = curNode.next;
+        newNode.next = nextNode;
+        if (nextNode) {
+          nextNode.prev = newNode;
+        }
+        newNode.prev = curNode;
+        curNode.next = newNode;
+      }
+
+      remove(val) {
+        let curNode = this.find(val);
+        if (curNode) {
+          let prevNode = curNode.prev;
+          prevNode.next = curNode.next;
+          curNode.next.prev = prevNode;
+          curNode.next = null;
+          curNode.prev = null;
+        }
+      }
+
+      find(val) {
+        let curNode = this.head;
+        while(curNode) {
+          if (curNode.value = val) {
+            return curNode;
+          }
+          curNode = curNode.next;
+        }
+      }
+    }
+
+
+    // 循环链表
+    function CycleNode(val) {
+      this.value = val;
+      this.next = null;
+    }
+
+
+    class CycleLinkList {
+      constructor() {
+        this.head = new CycleNode('head');
+      }
+
+      insert() {
+
+      }
+
+      remove() {
+
+      }
+
+      find() {
+
+      }
+    }
   </script>
 </body>
+
 </html>
