@@ -8,7 +8,11 @@
   </head>
 
   <body>
-    <div><a href="https://segmentfault.com/a/1190000004029168">深度剖析：如何实现一个 Virtual DOM 算法</a></div>
+    <ul>
+      <li><a href="https://segmentfault.com/a/1190000004029168">深度剖析：如何实现一个 Virtual DOM 算法</a></li>
+      <li><a href="https://github.com/KieSun/My-wheels">my-wheels</a></li>
+    </ul>
+
     <div id="app">
       <!-- 
         <div>children1</div>
@@ -30,7 +34,7 @@
       }
 
       let vnode = createVnode("div", { id: "page" }, [
-        createVnode("div", null, 'children1'),
+        createVnode("div", null, "children1"),
         createVnode("div", null, [createVnode("div", null, "children2")])
       ]);
 
@@ -42,7 +46,9 @@
           createVnode("div", null, [createVnode("div", null, "children2")])
         ]);
 
-        // patch(newVnode, vnode);
+        let patches = diff(newVnode, vnode);
+
+        patch(document.getElementById("app"), patches);
       }, 3000);
     </script>
   </body>

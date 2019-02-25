@@ -30,8 +30,8 @@ function diffNode(oldVnode, newVnode, index, patches) {
 
 function diffProps(oldProps = {}, newProps = {}) {
   let ret = [];
-  let oldPropNames = Object.keys(oldProps);
-  let newPropNames = Object.keys(newProps);
+  let oldPropNames = Object.keys(oldProps || {});
+  let newPropNames = Object.keys(newProps || {});
 
   oldPropNames.forEach(function(propName) {
     if (newPropNames.indexOf(propName) === -1) {
@@ -74,7 +74,7 @@ function diffChildren(oldChildren, newChildren, index, patches) {
         let node = newChildren[keyIndex];
         // 只遍历新旧中都存在的节点，其他新增或者删除的没必要遍历
         if (node) {
-          dfs(item, node, index, patches);
+          diffNode(item, node, index, patches);
         }
       } else index += 1;
       last = item;
