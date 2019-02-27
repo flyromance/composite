@@ -45,34 +45,43 @@
 
         return `maxStr: ${maxStr}; max length: ${max};`;
       }
-      console.log(findMax("raven", "havenoc"));
+      console.log("raven", "havenoc", "最长公共字符串", findMax("raven", "havenoc"));
 
       // 最长递增子序列 => 动态规划
       // 最长递增子序列意思是在一组数字中，找出最长一串递增的数字，比如
       // 0, 3, 4, 17, 2, 8, 6, 10
       function aaa(input) {
         if (input.length === 0) return 0;
-        let arr = new Array(input.length).fill(1);
-        let max = 0;
+        if (input.length === 1) return input.slice();
+        let arr = input.map(function(item) {
+          return [item];
+        });
+        let maxArr = [];
 
         for (var i = 1; i < input.length; i++) {
           for (var j = 0; j < i; j++) {
             if (input[i] > input[j]) {
-              arr[i] = Math.max(arr[i], arr[j] + 1);
+              // arr[i] = Math.max(arr[i], arr[j] + 1);
+              if (arr[i].length < arr[j].length + 1) {
+                arr[i] = arr[j].slice().concat(input[i]);
+              }
             }
           }
         }
 
         for (var k = 0; k < arr.length; k++) {
-          max = Math.max(max, arr[k]);
+          if (arr[k].length > maxArr.length) {
+            maxArr = arr[k];
+          }
         }
 
-        return max;
+        return maxArr;
       }
+      console.log([0, 3, 4, 17, 2, 8, 6, 10], "最大递增序列", aaa([0, 3, 4, 17, 2, 8, 6, 10]));
 
       // 给定一个数组，取出n个值，使得其和为sum？
       // 穷举组合
-      function emu(data, n, sum) {
+      function emu(data, n) {
         let ret = [];
         let stack = [];
         let flag = true;
@@ -104,6 +113,7 @@
 
         return ret;
       }
+      console.log([1, 23, 4, 5, 9, 7], "取3个值组合可能有", emu([1, 23, 4, 5, 9, 7], 3));
     </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
-function createVnode(tag, props, ...children) {
-  let _children = flatten(children);
-  return new Node(tag, props, _children);
+function createVnode(tag, props, children, key) {
+  // let _children = flatten(children);
+  return new Node(tag, props, children, key);
 }
 
 class Node {
@@ -40,7 +40,7 @@ function createElement(vnode) {
   }
 
   if (key) {
-    el.setAttribute("key", key);
+    elem.setAttribute("key", key);
   }
 
   if (children && children.length) {

@@ -21,22 +21,22 @@
     <script src="./patch.js"></script>
     <script>
       let vnode = createVnode("div", { id: "page" }, [
-        createVnode("div", null, "children1"),
-        createVnode("div", null, [createVnode("div", null, "children2")])
+        createVnode("div", null, ["children1"], "key1"),
+        createVnode("div", null, [createVnode("div", null, ["children2"])], "key2")
       ]);
 
       vnode.render("#app");
 
       setTimeout(function() {
         let newVnode = createVnode("div", { id: "page" }, [
-          createVnode("div", null, ["children1", createVnode("div", {}, "children3")]),
-          createVnode("div", null, [createVnode("div", null, "children2")])
+          createVnode("div", null, ['children1_modify'], "key1"),
+          // createVnode("div", null, [createVnode("div", null, ["children2"])], "key2")
         ]);
 
         let patches = diff(newVnode, vnode);
         console.log(patches);
-        patch(document.getElementById("app"), patches);
-      }, 3000);
+        patch(document.getElementById("page"), patches);
+      }, 1000);
     </script>
   </body>
 </html>

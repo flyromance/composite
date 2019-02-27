@@ -1,22 +1,25 @@
 function diff(oldVnode, newVnode) {
   let patches = {};
-  let index = 0;
-  diffNode(oldVnode, newVnode, index, patches);
+  diffNode(oldVnode, newVnode, 0, patches);
   return patches;
 }
 
 function diffNode(oldVnode, newVnode, index, patches) {
   let patch = [];
 
-  if (oldVnode.tag === newVnode.tag && oldVnode.key == newVnode.key) {
+  // 1、没有新的节点，什么都不用做
+  // 2、新的节点与旧的节点 tagname 和 key，只要有一个不同就替换
+  // 3、遍历子树
+  if (!newVnode) {
+  } else if (oldVnode.tag === newVnode.tag) {
     // 对比属性
     let propPatches = diffProps(oldVnode.props, newVnode.props);
-    if (propPatches.length) patch.push({ type: "prop", value: propPatches });
+    if (propPatches.length) patch.push({ type: StateEnums.ChangeProps, props: propPatches });
 
     // 对比子节点
     diffChildren(oldVnode.children, newVnode.children, index, patches);
   } else {
-    patch.push({ type: "replaceNode", node: newNode });
+    patch.push({ type: StateEnums.Replace, node: newVnode });
   }
 
   if (patch.length) {
@@ -92,18 +95,20 @@ function diffList(oldList, newList, index, patches) {
   // 1.可以正确获得被删除节点索引
   // 2.交换节点位置只需要操作一遍 DOM
   // 3.用于 `diffChildren` 函数中的判断，只需要遍历
-  // 两个树中都存在的节点，而对于新增或者删除的节点来说，完全没必要
-  // 再去判断一遍
+  // 两个树中都存在的节点，而对于新增或者删除的节点来说，完全没必要再去判断一遍
   let list = [];
   oldList &&
     oldList.forEach((item, i) => {
-      let key = item.key;
+      let key;
       if (isString(item)) {
         key = item;
+      } else {
+        key = item.key;
       }
+
       // 寻找新的 children 中是否含有当前节点
       // 没有的话需要删除
-      let index = newKeys.indexOf(key);
+      let index = newKeys.indexOf(key); 
       if (index === -1) {
         list.push(null);
       } else list.push(key);
@@ -162,11 +167,28 @@ function getKeys(list) {
     list.forEach(item => {
       let key;
       if (isString(item)) {
-        key = [item];
+        key = item; // todo key = [item] ?
       } else if (item instanceof Node) {
         key = item.key;
       }
       keys.push(key);
     });
   return keys;
+}
+
+function move(arr, old_index, new_index) {
+  while (old_index < 0) {
+    old_index += arr.length;
+  }
+  while (new_index < 0) {
+    new_index += arr.length;
+  }
+  if (new_index >= arr.length) {
+    let k = new_index - arr.length;
+    while (k-- + 1) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+  return arr;
 }
