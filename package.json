@@ -1,5 +1,19 @@
 {
-  "devDependencies": {
-    "ejs": "^2.5.6"
-  }
+  "name": "composite",
+  "version": "1.0.0",
+  "description": "train skill",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyromance/composite.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flyromance/composite/issues"
+  },
+  "homepage": "https://github.com/flyromance/composite#readme"
 }
