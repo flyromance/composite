@@ -56,7 +56,7 @@ const app = http.createServer(function(req, res) {
     // });
   } catch (e) {
     res.writeHead(302, {
-      Location: "/public/404.html"
+      Location: "/404.html"
     });
     res.end("page not found");
   }

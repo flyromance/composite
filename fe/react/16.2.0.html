@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <script type="text/javascript" src="./16.2.0/react.js"></script>
+    <script type="text/javascript" src="./16.2.0/react-dom.js"></script>
+    <script type="text/javascript" src="./react-router-dom-4.2.0.js"></script>
+
+    <!-- <script type="text/javascript" src="./redux/redux.js"></script>
+    <script type="text/javascript" src="./react/react-redux-5.0.6.js"></script>
+    <script type="text/javascript" src="./react/react-router-redux-4.0.8.js"></script> -->
+  </head>
+  <body>
+    <div id="app">app</div>
+    <script type="text/javascript">
+      class Header extends React.Component {
+        // >=16.3 新增
+        static getDerivedStateFromProps(nextProps, prevState) {
+          console.log("getDerivedStateFromProps");
+        }
+        // >=16.3 新增
+        getSnapshotBeforeUpdate(prevProps, prevState) {}
+
+        // init
+        // >=16.3 中被废除
+        componentWillMount() {
+          console.log("componentWillMount");
+        }
+        componentDidMount() {
+          console.log("componentDidMount");
+        }
+
+        // update
+        // >=16.3 中被废除, getDerivedStateFromProps
+        componentWillReceiveProps(props) {
+          console.log("componentWillReceiveProps", props);
+        }
+        shouldComponentUpdate(nextProps, nextState) {
+          console.log("shouldComponentUpdate", nextProps, nextState);
+          return true;
+        }
+        // >=16.3 中被废除, getSnapshotBeforeUpdate代替
+        componentWillUpdate(nextProps, nextState) {
+          console.log("componentWillUpdate", nextProps, nextState);
+        }
+        componentDidUpdate() {
+          console.log("componentDidUpdate");
+        }
+
+        componentWillUnmount() {
+          console.log("componentWillUnmount");
+        }
+
+        render() {
+            console.log('render');
+          return React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "a",
+              {
+                href: "#/home",
+                style: {
+                  marginRight: 10
+                }
+              },
+              "home"
+            ),
+            React.createElement(
+              "a",
+              {
+                href: "#/aboutus"
+              },
+              "about us"
+            )
+          );
+        }
+      }
+
+      class Home extends React.Component {
+        render() {
+          return React.createElement("div", "", "this is home");
+        }
+      }
+
+      class AboutUs extends React.Component {
+        render() {
+          return React.createElement("div", "", "this is AboutUs");
+        }
+      }
+
+      class App extends React.Component {
+        componentWillMount() {
+          setTimeout(() => {
+            this.setState({});
+          }, 1000);
+        }
+        render() {
+          return React.createElement(
+            ReactRouterDOM.HashRouter,
+            "",
+            React.createElement(
+              "div",
+              null,
+              React.createElement("div", null, React.createElement(Header, { name: "f" })),
+              React.createElement(
+                ReactRouterDOM.Switch,
+                "",
+                React.createElement(ReactRouterDOM.Route, {
+                  path: "/home",
+                  component: Home
+                }),
+                React.createElement(ReactRouterDOM.Route, {
+                  path: "/aboutus",
+                  component: AboutUs
+                })
+              ),
+              React.createElement("div", null, "this is footer")
+            )
+          );
+        }
+      }
+      //   React.createElement('div', {id: '123'}, ["abc"]);
+      //   let node = React.createElement(Header, { name: "f" }, React.createElement("div", { id: "123" }, ["abc"]));
+
+      ReactDOM.render(React.createElement(App), document.getElementById("app"));
+    </script>
+  </body>
+</html>

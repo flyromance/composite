@@ -7,9 +7,12 @@
     <title>Document</title>
   </head>
   <body>
-    <ul>
-      <li><a href="./16.2.0.html">16.2.0版本</a></li>
-      <li><a href="./16.8.2.html">16.8.2版本</a></li>
-    </ul>
+    <script>
+      window.addEventListener("hashchange", function(e) {
+        let { newURL, oldURL } = e;
+        let reg = /#(.+)?$/;
+        console.log(e);
+      });
+    </script>
   </body>
 </html>
