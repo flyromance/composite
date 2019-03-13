@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <a href=""></a>
+    <section>
+      <h2>排序分类</h2>
+      <ul>
+        <li>冒泡</li>
+        <li>插入</li>
+        <li><a href="https://segmentfault.com/a/1190000009366805">选择排序</a></li>
+        <li><a href="https://segmentfault.com/a/1190000008866524">归并排序</a></li>
+        <li><a href="https://segmentfault.com/a/1190000009461832">希尔排序</a></li>
+        <li><a href="https://segmentfault.com/a/1190000009426421">快速排序</a></li>
+      </ul>
+    </section>
+
+    <script>
+      /**
+       * 排序
+       * 参考：http://www.barretlee.com/blog/2016/08/11/algorithms-of-sort/
+       */
+      // 冒泡
+      function bubble(arr) {
+        var ret = arr.slice();
+        for (var i = 0; i < ret.length - 1; i++) {
+          for (var j = 0; j < ret.length - i - 1; j++) {
+            if (ret[j] > ret[j + 1]) {
+              ret[j] = [ret[j + 1], (ret[j + 1] = ret[j])][0];
+            }
+          }
+        }
+        return ret;
+      }
+
+      // 选择
+      function select(arr) {
+        var ret = arr.slice();
+        for (var i = 0; i < ret.length; i++) {
+          for (var j = i + 1; j < ret.length; j++) {
+            if (ret[i] > ret[j]) {
+              ret[i] = [ret[j], (ret[j] = ret[i])][0];
+            }
+          }
+        }
+        return ret;
+      }
+
+      // 插入
+      function insert(arr) {
+        var ret = arr.slice();
+        for (var i = 1; i < ret.length; i++) {
+          for (var j = i; j > 0; j--) {
+            if (ret[j - 1] > ret[j]) {
+              ret[j] = [ret[j - 1], (ret[j - 1] = ret[j])][0];
+            } else {
+              break;
+            }
+          }
+        }
+        return ret;
+      }
+
+      // 二分快排
+      function quick(arr) {
+        let ret = arr.slice();
+        let lens = ret.length;
+        if (lens === 1 || lens === 0) return ret;
+        let middleIndex = Math.floor(lens / 2);
+        let middleItem = ret.splice(middleIndex, 1)[0];
+        let leftArr = [];
+        let rightArr = [];
+        for (var i = 0; i < ret.length; i++) {
+          if (ret[i] >= middleItem) {
+            rightArr.push(ret[i]);
+          } else {
+            leftArr.push(ret[i]);
+          }
+        }
+        return quick(leftArr).concat(middleItem, quick(rightArr));
+      }
+    </script>
+  </body>
+</html>

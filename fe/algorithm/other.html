@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 随机生成指定长度的字符串
+      function randomString(n) {
+        var str = "abcdefghijklmnopqrstuvwxyz9876543210";
+        var i = 0,
+          index,
+          strLen = str.length,
+          ret = "";
+        while (i < n) {
+          index = Math.floor(Math.random() * strLen);
+          ret += str.charAt(index);
+          i++;
+        }
+
+        return ret;
+      }
+
+      // 寻找两个字符串的最大公共字符串
+      function findMax(a, b) {
+        var ret = "";
+        var temp = "";
+        var max = 0;
+        var maxStr = "";
+
+        for (var i = 0; i < a.length; i++) {
+          for (var j = i; j < a.length; j++) {
+            temp = a.slice(i, j + 1);
+            if (b.includes(temp)) {
+              if (temp.length > max) {
+                maxStr = temp;
+                max = temp.length;
+              }
+            }
+          }
+        }
+
+        return `maxStr: ${maxStr}; max length: ${max};`;
+      }
+      console.log("raven", "havenoc", "最长公共字符串", findMax("raven", "havenoc"));
+
+      // 最长递增子序列 => 动态规划
+      // 最长递增子序列意思是在一组数字中，找出最长一串递增的数字，比如
+      // 0, 3, 4, 17, 2, 8, 6, 10
+      function aaa(input) {
+        if (input.length === 0) return 0;
+        if (input.length === 1) return input.slice();
+        let arr = input.map(function(item) {
+          return [item];
+        });
+        let maxArr = [];
+
+        for (var i = 1; i < input.length; i++) {
+          for (var j = 0; j < i; j++) {
+            if (input[i] > input[j]) {
+              // arr[i] = Math.max(arr[i], arr[j] + 1);
+              if (arr[i].length < arr[j].length + 1) {
+                arr[i] = arr[j].slice().concat(input[i]);
+              }
+            }
+          }
+        }
+
+        for (var k = 0; k < arr.length; k++) {
+          if (arr[k].length > maxArr.length) {
+            maxArr = arr[k];
+          }
+        }
+
+        return maxArr;
+      }
+      console.log([0, 3, 4, 17, 2, 8, 6, 10], "最大递增序列", aaa([0, 3, 4, 17, 2, 8, 6, 10]));
+
+      // 给定一个数组，取出n个值，使得其和为sum？
+      // 穷举组合
+      function emu(data, n) {
+        let ret = [];
+        let stack = [];
+        let flag = true;
+
+        function recur(step) {
+          if (step === n) {
+            ret.push(stack.slice());
+            return;
+          }
+
+          for (var i = 0; i < data.length; i++) {
+            for (var j = 0; j < stack.length; j++) {
+              if (data[i] === stack[j]) {
+                flag = false;
+              }
+            }
+
+            if (flag) {
+              stack.push(data[i]);
+              recur(step + 1);
+              stack.pop(data[i]);
+            }
+
+            flag = true;
+          }
+        }
+
+        recur(0);
+
+        return ret;
+      }
+      console.log([1, 23, 4, 5, 9, 7], "取3个值组合可能有", emu([1, 23, 4, 5, 9, 7], 3));
+    </script>
+  </body>
+</html>
