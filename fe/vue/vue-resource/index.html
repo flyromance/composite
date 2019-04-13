@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="../vue.js"></script>
+	<script src="vue-resource.js"></script>
+</head>
+<body>
+	<div id="app">
+		<div>
+			<button @click="get">get</button>
+			<br>
+			<button @click="post">post</button>
+			<br>
+			<button @click="jsonp">jsonp</button>
+			<br>
+			<button @click="http">http</button>
+		</div>
+		<div>{{msg}}</div>
+	</div>
+
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				msg: ''
+			},
+			created: function () {
+
+				Vue.http.interceptors.push(function (req, next) {
+					console.log('request init...', req)
+					next(function (res) {
+						console.log('response init...', res)
+						return res
+					})
+				})
+			},
+			methods: {
+				get: function () {
+					var self = this
+					this.$http.get('/data.json', {
+						params: {
+							age: 123,
+						},
+						headers: {
+							token: 'fanlong'
+						},
+						before: function (req) {
+							console.log('before', req);
+						},
+					}).then(function (ret) {
+						console.log('get', ret)
+						self.msg = ret.data
+					})
+				},
+				post: function () {
+					var self = this
+					Vue.http.post('/data.json', {
+						userid: 23123
+					}, {
+						params: {
+							age: 123,
+						},
+						headers: {
+							token: 'fly'
+						}
+					}).then(function (ret) {
+						console.log('post', ret)
+					})
+				},
+				jsonp: function () {
+					var self = this;
+
+					// 不是ajax请求
+					this.$http.jsonp('/data.json', {
+						params: {
+							age: 'jsonp'
+						}
+					}).then(function (ret) {
+						console.log('jsonp', ret)
+					})
+				},
+				http: function () {
+					var self = this
+					this.$http({
+						method: 'post',
+						url: '/data.json',
+						data: {
+
+						},
+						params: {
+							age: 123
+						},
+						headers: {
+							token: '2046'
+						}
+					}).then(function (ret) {
+						console.log(ret)
+					})
+				}
+			}
+		})
+	</script>
+</body>
+</html>

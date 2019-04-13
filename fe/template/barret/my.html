@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+</head>
+
+<body>
+
+    <div id="container"></div>
+    <script type="text/template" id="j-tpl-test">
+    <div>hello, my name is <% name %>, age is <% age %>.</div>
+    <ul>
+    <% for (var i = 0; i < list.length; i++) { %>
+        <li><% list[i] %></li>
+    <% } %>    
+    </ul>
+    </script>
+    <script type="text/javascript">
+    var tpl = "hello, my \"name\" is <% name %>, age is <% age %>."
+    var data = {
+        name: 'fanlong',
+        age: 30,
+        list: [1, 2, 3, 4]
+    };
+    var data1 = {
+        "posts": [{
+            "expert": "content 1",
+            "time": "yesterday"
+        },{
+            "expert": "content 2",
+            "time": "today"
+        },{
+            "expert": "content 3",
+            "time": "tomorrow"
+        },{
+            "expert": "",
+            "time": "eee"
+        }]
+    };
+
+    // 需要解析成的字符串
+    var parsedTpl = 'var ret = []; with(this) { ret.push(\'hello, my \\"name\\" is \'); ret.push(name); ret.push(\', age is\'); ret.push(age); } return ret.join(\'\')';
+
+    // 用于解析的函数，生成parsedTpl字符串
+    function parseEngine(tpl) {
+        var start_code = "var ret = []; \n",
+            end_code = 'return ret.join("")',
+            code = '';
+        var reg = /<%([^%>]+)?%>/g,
+            regOut = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g;
+        var index = 0,
+            match;
+
+        function add(str, isJs) {
+            if (isJs) {
+                if (regOut.test(str)) {
+                    code += str + '\n';
+                } else {
+                    code += 'ret.push(' + str + '); \n';                    
+                }
+            } else {
+                code += 'ret.push("' + str.replace(/"/g, '\\"') + '"); \n';
+            }
+        }
+
+        while (match = reg.exec(tpl)) {
+            add(tpl.slice(index, match.index)); // 字符串
+            add(match[1].trim(), true); // 变量
+            index = match.index + match[0].length;
+        }
+        add(tpl.slice(index));
+        code = 'with(this) {\n' + code + '} \n';
+        code = start_code + code + end_code;
+
+        // 去除tab符号，不去除会报错！！！
+        return code.replace(/[\n]/g, ''); 
+    }
+
+    // api
+    function tplEngine(tpl, data) {
+        var node = document.getElementById(tpl),
+            html = '',
+            parsedHtml = '',
+            renderFn = null;
+
+        if (node) {
+            html = /^(input|textarea)$/i.test(node.nodeName) ? node.value : node.innerHTML;
+        } else {
+            html = tpl;          
+        }
+        console.log(html);
+        parsedHtml = parseEngine(html);
+        console.log(parsedHtml);
+        renderFn = new Function(parsedHtml);
+        // console.log(renderFn);
+
+        return renderFn.call(data);
+    }
+
+    var parsedHtml = tplEngine('j-tpl-test', data);
+    console.log(parsedHtml);
+    document.getElementById('container').innerHTML = parsedHtml;
+    </script>
+</body>
+
+</html>

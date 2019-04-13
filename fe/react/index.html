@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul>
+      <li><a href="./16.2.0.html">16.2.0版本</a></li>
+      <li><a href="./16.8.2.html">16.8.2版本</a></li>
+      <li><a href="./fiber.html">fiber</a></li>
+    </ul>
+    <div>
+      <h3>核心</h3>
+      <ul>
+        <li>vdom jsx</li>
+        <li>组件化
+          <li>生命周期</li>
+          <li>提供钩子hook</li>
+        </li>
+        <li>
+          性能优化: diff算法
+          <ul>
+            <li>操作dom是昂贵的，随便打印一个dom，特别大的对象，vdom很小，浏览器运行js特别快，肯定比dom快</li>
+            <li>另一方面，js操作dom，渲染进程得响应，就是线程直接的交互，少交互为好。于是出现了diff算法</li>
+            <li>比较新旧vdom，找出差异patches，再修改旧的dom</li>
+            <li>或者比较旧的dom与新的vdom的差异，直接修改旧的dom，少一次递归过程</li>
+          </ul>
+        </li>
+        <li>
+          性能优化: 异步setState 
+          <ul>
+            <li>合并state，不能每次修改都</li>
+            <li>异步执行flush，涉及到了event loop的知识。</li>
+          </ul>
+        </li>
+        <li>
+          性能优化: shouldComponentUpdate
+          <ul>
+            <li>因为一个引用对象，修改了其属性，数据变了，但是比较的时候，是相等的！</li>
+            <li>于是出现了immutable, 不可变数据</li>
+          </ul>
+        </li>
+        <li>
+          体验优化: fiber架构
+          <ul>
+            <li></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

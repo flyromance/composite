@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="/redux/redux.js"></script>
+	<script type="text/javascript" src="/lodash/lodash.js"></script>
+</head>
+<body>
+	<script>
+	var initState = {
+		count: 0,
+		todos: [],
+	}
+
+	function reducer(state, action) {
+		state = state || initState;
+
+		var _state = _.cloneDeep(state);
+
+		switch (action.type) {
+			case 'add':
+				_state.count++;
+				return _state;
+			case 'plus':
+				_state.count--;
+				return _state;
+			default:
+				return state;
+		}
+	}
+
+	var store = Redux.createStore(reducer, initState);
+
+	console.log(store.getState());
+
+	store.dispatch({
+		type: 'add'
+	});
+
+	console.log(store.getState());
+
+	store.dispatch({
+		type: 'plus'
+	});
+
+	</script>
+</body>
+</html>

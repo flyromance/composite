@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>https://www.jianshu.com/p/bf824722b496</div>
+    <div>
+      <a href="https://juejin.im/post/5a6547d0f265da3e283a1df7">从浏览器多进程到JS单线程，JS运行机制最全面的一次梳理</a>
+    </div>
+    <div>
+      <h3>浏览器多进程的优势</h3>
+      <ul>
+        <li>在浏览器中打开一个网页相当于新起了一个进程（进程内有自己的多线程）</li>
+        <li>如果浏览器是单进程，那么某个Tab页崩溃了，就影响了整个浏览器，体验有多差；</li>
+        <li>同理如果是单进程，插件崩溃了也会影响整个浏览器；</li>
+        <li>渲染进程</li>
+      </ul>
+    </div>
+    <div>
+      <h3>浏览器有几个进程</h3>
+      <ul>
+        <li>浏览器的主进程</li>
+        <li>第三方插件进程</li>
+        <li>GPU进程</li>
+        <li>渲染进程，也就是浏览器内核。 页面渲染、脚本执行、事件执行。</li>
+      </ul>
+    </div>
+    <div>
+      <h3><li>浏览器的渲染进程是多线程的</li></h3>
+      <ul>
+        <li>gui渲染线程</li>
+        <li>js引擎线程</li>
+        <li>事件触发线程，也就是事件维护队列，把回调交给js线程处理</li>
+        <li>定时器触发线程，数数，在一定时间后，把回调放到队列</li>
+        <li>http请求线程，请求数据，把回调交给事件触发</li>
+        <li>node环境的话: io 读取文件等操作</li>
+      </ul>
+      <div>渲染线程和js线程是互斥的</div>
+    </div>
+  </body>
+</html>

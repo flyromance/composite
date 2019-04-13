@@ -1,109 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="initial-scale=2," /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script>
+      let ratio = window.devicePixelRatio; // 物理像素 / 独立像素;
+      let scaleRatio = 1 / ratio;
+      let content = `width=device-width, initial-scale=${scaleRatio}, minimum-scale=${scaleRatio}, maximum-scale=${scaleRatio}`;
+      let viewport = document.querySelector("meta[name=viewport]");
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+      viewport
+        ? viewport.setAttribute("content", content)
+        : document.write(`<meta name="viewport" content="${content}" />`);
 
-  <script>
-    function onscroll() {
-      let ratio = window.devicePixelRatio;
-      
-      let html = document.documentElement;
+      function handleResize() {
+        let w = document.documentElement.clientWidth;
+        let size = (w * 100) / 750;
+        document.documentElement.style.fontSize = size + "px";
+      }
 
+      handleResize();
 
-      let width = getComputedStyle(html).innerWidth;
+      window.onresize = function() {
+        handleResize();
+      };
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-      html.style.fontSize = 1;
-    }
-    document.addEventListener('scroll', function (e) {
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
 
-    });
-    onscroll();
-  </script>
+      body {
+        margin: 0;
+      }
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+      #app {
+        height: 100%;
+        width: 100%;
+        padding: 1rem 0;
+        position: relative;
+        overflow: hidden;
+        background-color: #eee;
+        font-size: 0.24rem;
+      }
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-    }
+      .header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 1rem;
+        width: 100%;
+        background-color: red;
+      }
 
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
+      .footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1rem;
+        background-color: green;
+      }
 
-    #app {
-      position: relative;
-      height: 100%;
-      padding: 50px 0 50px 0px;
-    }
-
-    .header {
-      height: 50px;
-      width: 100%;
-      background-color: red;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .body {
-      overflow: auto;
-      height: 100%;
-    }
-
-    .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      height: 50px;
-      width: 100%;
-      background: green;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app">
-    <div class="header">
-      header
+      .body {
+        height: 100%;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="header"></div>
+      <div class="body">
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+        <div>content</div>
+      </div>
+      <div class="footer">
+        footer
+      </div>
     </div>
-    <div class="body">
-
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-    </div>
-    <div class="footer"></div>
-  </div>
-</body>
-
+  </body>
 </html>
