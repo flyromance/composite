@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class Stack {
+        constructor() {
+          this.q1 = []; // push shift
+          this.q2 = [];
+        }
+
+        push(val) {
+          this.q1.push(val);
+          this.q2.shift();
+          this.q2.push(val);
+        }
+
+        pop() {
+          this.q2.shift();
+          this.q2.push(this.q1[this.q1.length - 1]);
+        }
+      }
+    </script>
+  </body>
+</html>

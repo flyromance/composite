@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class Node {
+        constructor(val) {
+          this.value = val;
+          this.next = null;
+        }
+      }
+
+      class LinkSheet {
+        constructor(val) {
+          this.root = new Node(val);
+        }
+
+        add(val) {
+          let node = this.root;
+          do {
+            if (!node.next) {
+              node.next = new Node(val);
+              break;
+            }
+          } while ((node = node.next));
+        }
+
+        _find(node, val) {
+          if (!node) return;
+          if (node.value === val) {
+            return node;
+          } else {
+            return this._find(node.next, val);
+          }
+        }
+
+        find(val) {
+          let node = this.root;
+
+          while (node) {
+            if (node.value === val) {
+              return node;
+            }
+            node = node.next;
+          }
+          return null;
+          // return this._find(this.root, val);
+        }
+
+        _findPre(node, val) {
+          if (!node) return;
+          // if (node.value === val) return null;
+          if (node.next) {
+            if (node.next.value === val) {
+              return node;
+            } else {
+              return this._findPre(node.next, val);
+            }
+          } else {
+            return null;
+          }
+        }
+
+        findPre(val) {
+          let node = this.root;
+
+          while (node) {
+            if (node.next) {
+              if (node.next.value === val) {
+                return node;
+              }
+            }
+            node = node.next;
+          }
+          return null;
+          // return this._findPre(this.root, val);
+        }
+
+        insertAfter(val, _val) {
+          let node = this.find(_val);
+          if (!node) return;
+          let nextNode = node.next;
+          node.next = new Node(_val);
+          node.next.next = nextNode;
+          return this;
+        }
+
+        insertBefore(val, _val) {
+          let newNode = new Node(_val);
+          let node = this.findPre(val);
+          newNode.next = node.next;
+          if (node) {
+            node.next = newNode;
+          }
+          return this;
+        }
+
+        delete() {
+          let i = 0;
+          let node = this.root;
+          while ((node = node.next)) {
+            i++;
+            if (i % 2 !== 0) {
+              if (node.next) {
+                node.next = node.next.next;
+                i++;
+              }
+            }
+          }
+          return this;
+        }
+      }
+
+      let linkSheet = new LinkSheet(0);
+      linkSheet.add(1);
+      linkSheet.add(2);
+      linkSheet.add(3);
+      linkSheet.add(4);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class Node {
+        constructor(val) {
+          this.value = val;
+          this.left = null;
+          this.right = null;
+        }
+      }
+
+      class BinaryTree {
+        constructor(val) {
+          this.root = new Node(val);
+        }
+
+        _insert(node) {}
+
+        insert(val) {
+          let node = this.root;
+          while (node) {
+            if (val > node.value) {
+              if (!node.right) {
+                node.right = new Node(val);
+              } else {
+                node = node.right;
+              }
+            } else if (val < node.value) {
+              if (!node.left) {
+                node.left = new Node(val);
+              } else {
+                node = node.left;
+              }
+            } else {
+              node = null;
+            }
+          }
+        }
+
+        delete(val) {
+          let node = this.root;
+          while (node) {
+            if (val > node.value) {
+              if (node.right) {
+                if (node.right.value === val) {
+                  node.right = null;
+                } else {
+                  node = node.right;
+                }
+              } else {
+                return;
+              }
+            } else {
+              if (node.left) {
+                if (node.left.value === val) {
+                  node.left = null;
+                } else {
+                  node = node.left;
+                }
+              } else {
+                return;
+              }
+            }
+          }
+        }
+
+        sums(sum) {
+          let stack = [];
+          let ret = [];
+
+          function check() {
+            stack.reduce(function(a, b) {
+              return a + b;
+            }, 0) === sum && ret.push(stack.slice());
+          }
+
+          function traverse(node) {
+            if (!node) return;
+            stack.push(node.value);
+            if (!node.left && !node.right) {
+              check();
+            }
+
+            traverse(node.left);
+            node.left && stack.pop();
+
+            traverse(node.right);
+            node.right && stack.pop();
+          }
+
+          traverse(this.root);
+
+          return ret;
+        }
+      }
+
+      let binaryTree = new BinaryTree(7);
+      binaryTree.insert(5);
+      binaryTree.insert(10);
+      binaryTree.insert(9);
+      binaryTree.insert(3);
+      binaryTree.insert(4);
+
+      function middleTraverse(node) {
+        let ret = [];
+        if (node.left) {
+          ret = ret.concat(backTraverse(node.left));
+        }
+        ret.push(node.value);
+        if (node.right) {
+          ret = ret.concat(backTraverse(node.right));
+        }
+        return ret;
+      }
+
+      function backTraverse(node) {
+        let ret = [];
+        if (node.left) {
+          ret = ret.concat(backTraverse(node.left));
+        }
+        if (node.right) {
+          ret = ret.concat(backTraverse(node.right));
+        }
+        ret.push(node.value);
+        return ret;
+      }
+
+      console.log(backTraverse(binaryTree.root));
+    </script>
+  </body>
+</html>
