@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul>
+    <li><a href=""></a></li>
+  </ul>
+
+  <script>
+    function compose() {
+      let args = Array.prototype.slice.call(arguments);
+
+      if (args.length === 0) {
+        return function() {}
+      }
+
+      if (args.length === 1) {
+        return args[0]
+      }
+
+      return function () {
+        let _args = Array.prototype.slice.call(arguments);
+        return args.reduceRight(function (fn_a, fn_b) {
+          let ret = fn_a.apply(null, _args);
+          return fn_b.apply(null, Array.isArray(ret) ? ret : [ret]);
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>
